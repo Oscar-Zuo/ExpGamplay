@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6620866650186824841}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -73,3 +73,4 @@ MonoBehaviour:
     m_RotationOrder: 4
   enemyTypes:
   - {fileID: 690773638138909766, guid: 08d455feee463e9488b6e3c1f13ec32f, type: 3}
+  itemPool: []

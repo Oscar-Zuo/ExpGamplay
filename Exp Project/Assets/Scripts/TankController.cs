@@ -69,23 +69,27 @@ public class TankController : MonoBehaviour
         invincible = false;
     }
 
-    private void OnTriggerStay2D(Collider2D collider)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collider.gameObject.tag.Equals("Enemy"))
+        if (collision.gameObject.tag.Equals("Item"))
         {
-            GameObject enemy = collider.gameObject;
-            EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            OnHit(enemyController.TouchDamage);
-        }
-        if (collider.gameObject.tag.Equals("Item"))
-        {
-            GameObject item = collider.gameObject;
+            GameObject item = collision.gameObject;
             ItemController itemController = item.GetComponent<ItemController>();
             if (itemController.ItemType == EItemType.Weapon)
             {
                 weaponsSlotsController.AddWeapon(itemController.ItemObject);
             }
             Destroy(item);
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag.Equals("Enemy"))
+        {
+            GameObject enemy = collision.gameObject;
+            EnemyController enemyController = enemy.GetComponent<EnemyController>();
+            OnHit(enemyController.TouchDamage);
         }
     }
 }

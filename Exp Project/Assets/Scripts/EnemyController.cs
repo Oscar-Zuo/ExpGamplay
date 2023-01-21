@@ -10,6 +10,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] protected float speed = 4;
     [SerializeField] protected float health = 10;
     [SerializeField] protected int touchDamage = 1;
+    [SerializeField] protected List<GameObject> itemList;
+    private GameManager gameManager;
     private Rigidbody2D rb2D;
 
     public int TouchDamage { get => touchDamage; set => touchDamage = value; }
@@ -20,6 +22,13 @@ public class EnemyController : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         animator = GetComponent<Animator>();
         rb2D = GetComponent<Rigidbody2D>();
+        gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
+        // this enemy drops item
+        if (Random.value <= gameManager.enemyDropItemChance)
+        {
+            itemList.Add(gameManager.itemPool[Random.Range(0, gameManager.itemPool.Length-1)]);
+            GetComponent<SpriteRenderer>().color = Color.yellow;
+        }
     }
 
     // Update is called once per frame
@@ -48,6 +57,13 @@ public class EnemyController : MonoBehaviour
     public void Dead()
     {
         animator.SetTrigger("Dead");
+        if (itemList!= null&&itemList.Count>0)
+        {
+            foreach (var item in itemList)
+            {
+                Instantiate(item, transform.position-new Vector3(0,0,1), Quaternion.identity);
+            }
+        }
         Destroy(gameObject);
     }
 }

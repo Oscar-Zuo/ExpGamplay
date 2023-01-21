@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,6 +13,7 @@ public class GameManager : MonoBehaviour
     public float enemyDropItemChance = 0.05f;
     public AnimationCurve enemySpawnCurve;
     public List<GameObject> enemyTypes;
+    public GameObject[] itemPool;
     private GameObject player;
     private bool enemySpawnCoolingDown;
 
@@ -18,6 +21,7 @@ public class GameManager : MonoBehaviour
     {
         enemySpawnCoolingDown = false;
         player = GameObject.FindGameObjectWithTag("Player");
+        itemPool = Resources.LoadAll<GameObject>("Prefabs/Items");
     }
 
     IEnumerator IEnemySpawn()
