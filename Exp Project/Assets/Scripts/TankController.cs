@@ -5,12 +5,14 @@ using UnityEngine;
 public class TankController : MonoBehaviour
 {
     [SerializeField] protected float forwardSpeed = 7, rotationSpeed = 180, backwardSpeed = 5;
-    [SerializeField] protected int health, maxHealth = 5;
+    [SerializeField] protected int maxHealth = 5;
+    protected int health;
     public float invincibleTime = 1;
     protected Vector2 speed;
     Vector3 oldPosition;
     bool invincible = false;
     private Rigidbody2D rb2D;
+    [SerializeField] private WeaponsSlotsController weaponsSlotsController;
 
     public Vector2 Speed { get => speed; set => speed = value; }
 
@@ -81,8 +83,9 @@ public class TankController : MonoBehaviour
             ItemController itemController = item.GetComponent<ItemController>();
             if (itemController.ItemType == EItemType.Weapon)
             {
-                
+                weaponsSlotsController.AddWeapon(itemController.ItemObject);
             }
+            Destroy(item);
         }
     }
 }

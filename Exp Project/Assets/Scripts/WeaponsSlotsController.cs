@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -18,14 +17,14 @@ public class WeaponsSlotsController : MonoBehaviour
         }
     }
 
-    public List<WeaponObject> weaponsSlots;
+    public List<WeaponObject> weaponSlots;
     private bool lastFrameFireInput;
 
     // Start is called before the first frame update
     void Start()
     {
         lastFrameFireInput = false;
-        foreach (var weaponSlot in weaponsSlots)
+        foreach (var weaponSlot in weaponSlots)
         {
             if (weaponSlot.weapon)
             {
@@ -41,7 +40,7 @@ public class WeaponsSlotsController : MonoBehaviour
         bool fireInput = Input.GetMouseButton(0);
         if (fireInput && !lastFrameFireInput)
         {
-            foreach (var weaponSlot in weaponsSlots)
+            foreach (var weaponSlot in weaponSlots)
             {
                 if (weaponSlot.weapon)
                     weaponSlot.weapon.GetComponent<BasicWeaponController>().StartFire();
@@ -49,18 +48,26 @@ public class WeaponsSlotsController : MonoBehaviour
         }
     }
 
-    public bool AddWeapon(GameObject weapon)
+    public void AddWeapon(GameObject weapon)
     {
-        if (weapon == null) { return false; }
-        for (int i=0; i<weaponsSlots.Count; i++)
+        bool added = false;
+        for (int i=0; i<weaponSlots.Count; i++)
         {
-            if (weaponsSlots[i].weapon!=null)
+            if (weaponSlots[i].weapon==null)
             {
-                WeaponObject weaponObject = weaponsSlots[i];
+                WeaponObject weaponObject = weaponSlots[i];
                 weaponObject.weapon = Instantiate(weapon, weaponObject.weaponPivots);
-                weaponsSlots[i] = weaponObject;
+                weaponSlots[i] = weaponObject;
+                added= true;
+                break;
             }
         }
-        return true;
+        if (!added)
+        {
+            int index = Random.Range(0, weaponSlots.Count);
+            WeaponObject weaponObject = weaponSlots[index];
+            weaponObject.weapon = Instantiate(weapon, weaponObject.weaponPivots);
+            weaponSlots[index] = weaponObject;
+        }
     }
 }

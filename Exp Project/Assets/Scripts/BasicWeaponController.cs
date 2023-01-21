@@ -15,7 +15,7 @@ public class BasicWeaponController : MonoBehaviour
 
     void Start()
     {
-        isFiring = false;
+        isFiring = true;
     }
 
     // Update is called once per frame

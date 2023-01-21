@@ -299,12 +299,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa20f52ab8a2e6c4e9c55b3aad837e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardSpeed: 10
+  forwardSpeed: 5
   rotationSpeed: 180
-  backwardSpeed: 5
+  backwardSpeed: 3
   health: 0
   maxHealth: 5
   invincibleTime: 1
+  weaponsSlotsController: {fileID: 8933755033668745915}
 --- !u!114 &5398308346332139166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -668,7 +669,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238eb0320b7cf404783cac03db5b8397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponsSlots:
+  weaponSlots:
   - weapon: {fileID: 1604418810824632604}
     weaponPivots: {fileID: 5654120197971093691}
   - weapon: {fileID: 0}

@@ -14,12 +14,20 @@ public class ItemController : MonoBehaviour
 
     [SerializeField] protected EItemType itemType;
     [SerializeField] protected GameObject itemObject;
+    [SerializeField] protected float lifeTime = 30;
     public EItemType ItemType { get => itemType; set => itemType = value; }
     public GameObject ItemObject { get => itemObject; set => itemObject = value; }
+    public float LifeTime { get => lifeTime; set => lifeTime = value; }
 
     void Start()
     {
-        
+        SelfDestruct();
+    }
+
+    IEnumerator SelfDestruct()
+    {
+        yield return new WaitForSeconds(lifeTime);
+        Destroy(gameObject);
     }
 
     // Update is called once per frame
