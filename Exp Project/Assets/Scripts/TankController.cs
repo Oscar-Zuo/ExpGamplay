@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TankController : MonoBehaviour
 {
-    [SerializeField] protected float forwardSpeed = 7, rotationSpeed = 180, backwardSpeed = 5;
+    [SerializeField] protected float backwardSpeed = 5, maxSpeed = 15, minSpeed = 3;
     [SerializeField] protected int maxHealth = 5;
     protected int health;
     public float invincibleTime = 1;
@@ -13,8 +13,12 @@ public class TankController : MonoBehaviour
     bool invincible = false;
     private Rigidbody2D rb2D;
     [SerializeField] private WeaponsSlotsController weaponsSlotsController;
+    [SerializeField] protected float forwardSpeed = 7, rotationSpeed = 180;
 
     public Vector2 Speed { get => speed; set => speed = value; }
+    public float ForwardSpeed { get => forwardSpeed; set => forwardSpeed = Mathf.Clamp(value, minSpeed, maxSpeed); }
+    public float BackwardSpeed { get => backwardSpeed; set => backwardSpeed = Mathf.Clamp(value, minSpeed, maxSpeed); }
+    public float RotationSpeed { get => rotationSpeed; set => rotationSpeed = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -30,7 +34,7 @@ public class TankController : MonoBehaviour
         Vector2 translation;
         if (Input.GetAxis("Vertical") > 0)
         {
-            translation = Input.GetAxis("Vertical") * Time.fixedDeltaTime * transform.up * forwardSpeed;
+            translation = Input.GetAxis("Vertical") * Time.fixedDeltaTime * transform.up * ForwardSpeed;
             rb2D.MovePosition(rb2D.position + translation);
         }
             
@@ -42,7 +46,7 @@ public class TankController : MonoBehaviour
 
         float rotation = -Input.GetAxis("Horizontal") * Time.fixedDeltaTime;
         // rotate tank
-        rb2D.MoveRotation(rb2D.rotation + rotation * rotationSpeed);
+        rb2D.MoveRotation(rb2D.rotation + rotation * RotationSpeed);
 
         // Get speed for bullets
         speed = transform.up * Vector3.Distance(oldPosition, transform.position);

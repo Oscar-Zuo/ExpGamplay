@@ -15,24 +15,29 @@ public class ItemController : MonoBehaviour
     [SerializeField] protected EItemType itemType;
     [SerializeField] protected GameObject itemObject;
     [SerializeField] protected float lifeTime = 30;
+    protected TankController playerController;
+
     public EItemType ItemType { get => itemType; set => itemType = value; }
     public GameObject ItemObject { get => itemObject; set => itemObject = value; }
     public float LifeTime { get => lifeTime; set => lifeTime = value; }
 
-    void Start()
+    virtual protected void Start()
     {
-        SelfDestruct();
-    }
-
-    IEnumerator SelfDestruct()
-    {
-        yield return new WaitForSeconds(lifeTime);
-        Destroy(gameObject);
+        playerController = GameObject.FindWithTag("Player").GetComponent<TankController>();
     }
 
     // Update is called once per frame
-    void Update()
+    virtual protected void Update()
     {
-        
+        lifeTime-=Time.deltaTime;
+        if (lifeTime<=0)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    virtual protected void ActivateItemEffects()
+    {
+
     }
 }
