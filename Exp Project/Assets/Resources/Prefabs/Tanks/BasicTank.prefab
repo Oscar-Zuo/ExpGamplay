@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2127534351811636159
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9143544910247034756}
+  m_Layer: 0
+  m_Name: Decoractions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9143544910247034756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2127534351811636159}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 8615419855025371986}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2178158272183565235
 GameObject:
   m_ObjectHideFlags: 0
@@ -284,6 +315,7 @@ Transform:
   - {fileID: 592080592695828877}
   - {fileID: 4741509303332653526}
   - {fileID: 8591221980067412005}
+  - {fileID: 9143544910247034756}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -299,13 +331,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa20f52ab8a2e6c4e9c55b3aad837e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardSpeed: 5
-  rotationSpeed: 180
   backwardSpeed: 3
-  health: 0
+  maxSpeed: 15
+  minSpeed: 3
   maxHealth: 5
   invincibleTime: 1
   weaponsSlotsController: {fileID: 8933755033668745915}
+  forwardSpeed: 5
+  rotationSpeed: 180
 --- !u!114 &5398308346332139166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,7 +352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flashingColor: {r: 1, g: 1, b: 1, a: 1}
-  flashingTime: 0.1
+  flashingTime: 0.2
   flashingLast: 1
   spriteRanderers:
   - {fileID: 7608721227891572979}

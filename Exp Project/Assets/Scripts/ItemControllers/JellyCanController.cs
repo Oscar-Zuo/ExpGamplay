@@ -18,10 +18,10 @@ public class JellyCanController : ItemController
         base.Update();
     }
 
-    protected override void ActivateItemEffects()
+    public override void ActivateItemEffects()
     {
         base.ActivateItemEffects();
-        base.playerController.ForwardSpeed += speed;
-        base.playerController.BackwardSpeed+= speed;
+        playerController.ForwardSpeed += speed;
+        playerController.BackwardSpeed+= speed;
     }
 }

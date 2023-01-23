@@ -11,6 +11,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] protected float health = 10;
     [SerializeField] protected int touchDamage = 1;
     [SerializeField] protected List<GameObject> itemList;
+    protected int numOfEnemies = 1;
+    protected float statusModifier = 1;
+    private GameObject combinedObject = null;
+    private Vector3 originScale;
     private GameManager gameManager;
     private Rigidbody2D rb2D;
 
@@ -26,9 +30,10 @@ public class EnemyController : MonoBehaviour
         // this enemy drops item
         if (Random.value <= gameManager.enemyDropItemChance)
         {
-            itemList.Add(gameManager.itemPool[Random.Range(0, gameManager.itemPool.Length-1)]);
+            itemList.Add(gameManager.GetRandomItem());
             GetComponent<SpriteRenderer>().color = Color.yellow;
         }
+        originScale = transform.localScale;
     }
 
     // Update is called once per frame
@@ -37,8 +42,8 @@ public class EnemyController : MonoBehaviour
         Vector2 playerPostion = player.GetComponent<Rigidbody2D>().position;
         float lookAtAngle = Vector2.SignedAngle(rb2D.transform.up, playerPostion - rb2D.position);
         rb2D.MoveRotation(rb2D.rotation+ lookAtAngle * Time.fixedDeltaTime * 5);
-        rb2D.AddForce((playerPostion - rb2D.position).normalized, ForceMode2D.Impulse);
-        rb2D.velocity = rb2D.velocity.normalized * speed;
+        rb2D.AddForce((playerPostion - rb2D.position).normalized * numOfEnemies * numOfEnemies, ForceMode2D.Impulse);
+        rb2D.velocity = rb2D.velocity.normalized * speed * statusModifier;
         //transform.Translate(Vector3.up * Time.deltaTime * speed);
     }
 
@@ -65,5 +70,36 @@ public class EnemyController : MonoBehaviour
             }
         }
         Destroy(gameObject);
+    }
+
+    protected void AskForDestroy(GameObject fromObject)
+    {
+        if (fromObject == combinedObject)
+            Destroy(gameObject);
+    }
+
+    protected void OnCollisionEnter2D(Collision2D collision)
+    {
+        // combine enemies
+        GameObject collisionObject = collision.gameObject;
+        if (collision.gameObject.tag == "Enemy")
+        {
+            EnemyController otherEnemyController = collisionObject.GetComponent<EnemyController>();
+            statusModifier = Mathf.Sqrt(++numOfEnemies);
+            health += otherEnemyController.health + 1;
+            rb2D.mass += otherEnemyController.rb2D.mass;
+            transform.localScale = originScale * statusModifier;
+            itemList.AddRange(otherEnemyController.itemList);
+
+            // have some chance to generate item when combines
+            if (Random.value <= gameManager.enemyDropItemChance / 1.5)
+            {
+                itemList.Add(gameManager.GetRandomItem());
+                GetComponent<SpriteRenderer>().color = Color.yellow;
+            }
+
+            combinedObject = collisionObject;
+            otherEnemyController.AskForDestroy(gameObject);
+        }
     }
 }

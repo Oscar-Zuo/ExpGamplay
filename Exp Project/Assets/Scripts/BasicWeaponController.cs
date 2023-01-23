@@ -12,10 +12,12 @@ public class BasicWeaponController : MonoBehaviour
     protected float angle;
     private bool isFiring;
     private Coroutine currentCoroutine;
+    private TankController playerController;
 
     void Start()
     {
         isFiring = true;
+        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<TankController>();
     }
 
     // Update is called once per frame
@@ -52,7 +54,7 @@ public class BasicWeaponController : MonoBehaviour
             float weaponLength = GetComponent<BoxCollider2D>().size.y;
             bullet.transform.position = transform.position + transform.up*weaponLength;
             bullet.transform.rotation = transform.rotation;
-            yield return new WaitForSeconds(fireRate);
+            yield return new WaitForSeconds(fireRate * playerController.FireRateModifier);
             currentCoroutine = null;
         }
         currentCoroutine = StartCoroutine(EFire());

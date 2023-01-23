@@ -36,7 +36,7 @@ public class ItemController : MonoBehaviour
         }
     }
 
-    virtual protected void ActivateItemEffects()
+    public virtual void ActivateItemEffects()
     {
 
     }

@@ -8,7 +8,10 @@ public class ProjectileController : MonoBehaviour
     // Start is called before the first frame update
 
     public float speed = 30, maxLifeTime = 3;
-    public float damage = 1;
+    public float damageModifier = 1;
+    float playerDamage;
+    public bool explosive = false;
+    public GameObject explosiveObject;
     [SerializeField] protected float knockBackForce = 1;
     [SerializeField] protected bool penetration = false;
     private float lifetime;
@@ -18,6 +21,7 @@ public class ProjectileController : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        playerDamage = player.GetComponent<TankController>().PlayerDamage;
         lifetime = 0;
     }
 
@@ -28,6 +32,10 @@ public class ProjectileController : MonoBehaviour
         // if the bullet reached its lifetime, it will be destory to save resources
         if (lifetime>=maxLifeTime)
         {
+            if (explosive)
+            {
+                Instantiate(explosiveObject, transform.position, Quaternion.identity);
+            }
             Destroy(gameObject);
         }
         Move();
@@ -39,12 +47,16 @@ public class ProjectileController : MonoBehaviour
         transform.Translate(Vector3.up * Time.deltaTime * speed);
     }
 
-    protected virtual void OnTriggerStay2D(Collider2D collider)
+    protected virtual void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.tag.Equals("Enemy"))
         {
             EnemyController controller = collider.GetComponent<EnemyController>();
-            controller.GetHit(damage, knockBackForce,  gameObject);
+            controller.GetHit(GetDamage(), knockBackForce,  gameObject);
+            if (explosive)
+            {
+                Instantiate(explosiveObject, transform.position, Quaternion.identity);
+            }
             if (!penetration)
             {
                 Destroy(gameObject);
@@ -55,6 +67,6 @@ public class ProjectileController : MonoBehaviour
 
     public virtual float GetDamage()
     {
-        return damage;
+        return playerDamage * damageModifier;
     }
 }

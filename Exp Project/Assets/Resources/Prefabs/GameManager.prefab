@@ -74,3 +74,4 @@ MonoBehaviour:
   enemyTypes:
   - {fileID: 690773638138909766, guid: 08d455feee463e9488b6e3c1f13ec32f, type: 3}
   itemPool: []
+  gameOverUIObject: {fileID: 3943802288412678847, guid: 6d3bbdb77abf2d645b522ae2841fee83, type: 3}

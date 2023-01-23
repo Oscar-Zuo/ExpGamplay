@@ -16,12 +16,26 @@ public class GameManager : MonoBehaviour
     public GameObject[] itemPool;
     private GameObject player;
     private bool enemySpawnCoolingDown;
+    public GameObject gameOverUIObject; 
 
     void Start()
     {
         enemySpawnCoolingDown = false;
         player = GameObject.FindGameObjectWithTag("Player");
         itemPool = Resources.LoadAll<GameObject>("Prefabs/Items");
+    }
+
+    public GameObject GetRandomItem()
+    {
+        GameObject item = itemPool[Random.Range(0, itemPool.Length)];
+        ItemController itemController = item.GetComponent<ItemController>();
+
+        // TODO:: the worst way to change item weight, but I don't have time for this
+        if (itemController.ItemType == EItemType.Weapon ) 
+        {
+            item = itemPool[Random.Range(0, itemPool.Length)];
+        }
+        return item;
     }
 
     IEnumerator IEnemySpawn()
@@ -63,5 +77,11 @@ public class GameManager : MonoBehaviour
             Instantiate(enemyTypes[Random.Range(0, enemyTypes.Count)], spawnLocation, Quaternion.identity);
             
         }
+    }
+
+    public void GameOver()
+    {
+        Instantiate(gameOverUIObject);
+        Time.timeScale = 0;
     }
 }
