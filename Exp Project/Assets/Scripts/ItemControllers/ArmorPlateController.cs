@@ -20,7 +20,7 @@ public class ArmorPlateController : ItemController
     public override void ActivateItemEffects()
     {
         base.ActivateItemEffects();
-        playerController.MaxHealth += 1;
-        playerController.Health += 2;
+        GameManager.instance.playerController.MaxHealth += 1;
+        GameManager.instance.playerController.Health += 2;
     }
 }

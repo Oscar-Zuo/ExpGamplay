@@ -20,6 +20,6 @@ public class StarController : ItemController
     public override void ActivateItemEffects()
     {
         base.ActivateItemEffects();
-        playerController.RotationSpeed += rotationSpeed;
+        GameManager.instance.playerController.RotationSpeed += rotationSpeed;
     }
 }

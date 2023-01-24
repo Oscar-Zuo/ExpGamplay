@@ -20,7 +20,7 @@ public class APAmmoController : ItemController
     public override void ActivateItemEffects()
     {
         base.ActivateItemEffects();
-        playerController.PlayerDamage += damage;
+        GameManager.instance.playerController.PlayerDamage += damage;
     }
 
 }

@@ -20,6 +20,6 @@ public class LionController : ItemController
     public override void ActivateItemEffects()
     {
         base.ActivateItemEffects();
-        playerController.FireRateModifier *= fireRateModifier;
+        GameManager.instance.playerController.FireRateModifier *= fireRateModifier;
     }
 }

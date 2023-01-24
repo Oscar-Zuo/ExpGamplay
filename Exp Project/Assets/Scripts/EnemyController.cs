@@ -43,7 +43,7 @@ public class EnemyController : MonoBehaviour
         float lookAtAngle = Vector2.SignedAngle(rb2D.transform.up, playerPostion - rb2D.position);
         rb2D.MoveRotation(rb2D.rotation+ lookAtAngle * Time.fixedDeltaTime * 5);
         rb2D.AddForce((playerPostion - rb2D.position).normalized * numOfEnemies * numOfEnemies, ForceMode2D.Impulse);
-        rb2D.velocity = rb2D.velocity.normalized * speed * statusModifier;
+        rb2D.velocity = rb2D.velocity.normalized * Mathf.Clamp(speed * statusModifier, 0, GameManager.instance.playerController.ForwardSpeed);
         //transform.Translate(Vector3.up * Time.deltaTime * speed);
     }
 
@@ -85,14 +85,20 @@ public class EnemyController : MonoBehaviour
         if (collision.gameObject.tag == "Enemy")
         {
             EnemyController otherEnemyController = collisionObject.GetComponent<EnemyController>();
-            statusModifier = Mathf.Sqrt(++numOfEnemies);
+            numOfEnemies += otherEnemyController.numOfEnemies;
+            statusModifier = Mathf.Pow(numOfEnemies, 1f / 3f);
             health += otherEnemyController.health + 1;
             rb2D.mass += otherEnemyController.rb2D.mass;
-            transform.localScale = originScale * statusModifier;
-            itemList.AddRange(otherEnemyController.itemList);
+            transform.localScale = originScale * Mathf.Clamp(statusModifier, 1, 3);
+            if (otherEnemyController.itemList.Count>0)
+            {
+                itemList.AddRange(otherEnemyController.itemList);
+                GetComponent<SpriteRenderer>().color = Color.yellow;
+            }
+
 
             // have some chance to generate item when combines
-            if (Random.value <= GameManager.instance.enemyDropItemChance / 1.5)
+            if (Random.value <= GameManager.instance.enemyDropItemChance /1.5*statusModifier)
             {
                 itemList.Add(GameManager.instance.GetRandomItem());
                 GetComponent<SpriteRenderer>().color = Color.yellow;
