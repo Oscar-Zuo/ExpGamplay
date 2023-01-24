@@ -6,7 +6,7 @@ public class EnemyController : MonoBehaviour
 {
     // Start is called before the first frame update
     Animator animator;
-    GameObject player;
+    //GameObject player;
     [SerializeField] protected float speed = 4;
     [SerializeField] protected float health = 10;
     [SerializeField] protected int touchDamage = 1;
@@ -15,7 +15,7 @@ public class EnemyController : MonoBehaviour
     protected float statusModifier = 1;
     private GameObject combinedObject = null;
     private Vector3 originScale;
-    private GameManager gameManager;
+    //private GameManager gameManager;
     private Rigidbody2D rb2D;
 
     public int TouchDamage { get => touchDamage; set => touchDamage = value; }
@@ -23,14 +23,14 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         //animator=GetComponent<Animator>();
-        player = GameObject.FindGameObjectWithTag("Player");
+        //player = GameObject.FindGameObjectWithTag("Player");
         animator = GetComponent<Animator>();
         rb2D = GetComponent<Rigidbody2D>();
-        gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
+        //gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
         // this enemy drops item
-        if (Random.value <= gameManager.enemyDropItemChance)
+        if (Random.value <= GameManager.instance.enemyDropItemChance)
         {
-            itemList.Add(gameManager.GetRandomItem());
+            itemList.Add(GameManager.instance.GetRandomItem());
             GetComponent<SpriteRenderer>().color = Color.yellow;
         }
         originScale = transform.localScale;
@@ -39,7 +39,7 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Vector2 playerPostion = player.GetComponent<Rigidbody2D>().position;
+        Vector2 playerPostion = GameManager.instance.player.GetComponent<Rigidbody2D>().position;
         float lookAtAngle = Vector2.SignedAngle(rb2D.transform.up, playerPostion - rb2D.position);
         rb2D.MoveRotation(rb2D.rotation+ lookAtAngle * Time.fixedDeltaTime * 5);
         rb2D.AddForce((playerPostion - rb2D.position).normalized * numOfEnemies * numOfEnemies, ForceMode2D.Impulse);
@@ -92,9 +92,9 @@ public class EnemyController : MonoBehaviour
             itemList.AddRange(otherEnemyController.itemList);
 
             // have some chance to generate item when combines
-            if (Random.value <= gameManager.enemyDropItemChance / 1.5)
+            if (Random.value <= GameManager.instance.enemyDropItemChance / 1.5)
             {
-                itemList.Add(gameManager.GetRandomItem());
+                itemList.Add(GameManager.instance.GetRandomItem());
                 GetComponent<SpriteRenderer>().color = Color.yellow;
             }
 

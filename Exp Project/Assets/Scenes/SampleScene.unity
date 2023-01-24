@@ -179,6 +179,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6620866650186824841, guid: 4961809488e8e334eb8f973d4f69640c, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2043730422}
+    - target: {fileID: 6620866650186824841, guid: 4961809488e8e334eb8f973d4f69640c, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 2043730426}
+    - target: {fileID: 6620866650186824841, guid: 4961809488e8e334eb8f973d4f69640c, type: 3}
       propertyPath: enemySpawnCurve.m_Curve.Array.data[0].value
       value: 0.8
       objectReference: {fileID: 0}
@@ -100623,3 +100631,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b4dd7ad4a0ac0c46a355e76da14060b, type: 3}
+--- !u!1 &2043730422 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3409857393983389555, guid: cc344557d9f8b704283e34b205cd480b, type: 3}
+  m_PrefabInstance: {fileID: 906099849}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2043730426 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7966883784048649727, guid: cc344557d9f8b704283e34b205cd480b, type: 3}
+  m_PrefabInstance: {fileID: 906099849}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043730422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa20f52ab8a2e6c4e9c55b3aad837e1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

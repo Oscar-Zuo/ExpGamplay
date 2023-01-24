@@ -14,15 +14,24 @@ public class GameManager : MonoBehaviour
     public AnimationCurve enemySpawnCurve;
     public List<GameObject> enemyTypes;
     public GameObject[] itemPool;
-    private GameObject player;
+    public GameObject player;
+    public TankController playerController;
     private bool enemySpawnCoolingDown;
     public GameObject gameOverUIObject; 
+
+    public static GameManager instance;
 
     void Start()
     {
         enemySpawnCoolingDown = false;
-        player = GameObject.FindGameObjectWithTag("Player");
+        //player = GameObject.FindGameObjectWithTag("Player");
         itemPool = Resources.LoadAll<GameObject>("Prefabs/Items");
+        playerController = player.GetComponent<TankController>();
+    }
+
+    private void Awake()
+    {
+        instance= this;
     }
 
     public GameObject GetRandomItem()

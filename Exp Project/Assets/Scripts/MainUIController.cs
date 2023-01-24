@@ -8,12 +8,12 @@ public class MainUIController : MonoBehaviour
 {
     // Start is called before the first frame update
     UnityEngine.UIElements.Label health;
-    TankController playerController;
+    //TankController playerController;
     void Start()
     {
         var rootVisualElement = GetComponent<UIDocument>().rootVisualElement;
         health = rootVisualElement.Q<UnityEngine.UIElements.Label>("Health");
-        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<TankController>();
+        //playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<TankController>();
     }
 
     // Update is called once per frame
@@ -21,9 +21,9 @@ public class MainUIController : MonoBehaviour
     {
         if (health != null)
         {
-            health.text = playerController.Health.ToString();
+            health.text = GameManager.instance.playerController.Health.ToString();
 
-            if (playerController.Health <= 2)
+            if (GameManager.instance.playerController.Health <= 2)
                 health.style.color = Color.red;
             else
                 health.style.color = Color.green;

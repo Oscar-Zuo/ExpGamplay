@@ -9,19 +9,17 @@ public class ProjectileController : MonoBehaviour
 
     public float speed = 30, maxLifeTime = 3;
     public float damageModifier = 1;
-    float playerDamage;
     public bool explosive = false;
     public GameObject explosiveObject;
     [SerializeField] protected float knockBackForce = 1;
     [SerializeField] protected bool penetration = false;
     private float lifetime;
-    GameObject player;
 
     public bool Penetration { get => penetration; set => penetration = value; }
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerDamage = player.GetComponent<TankController>().PlayerDamage;
+        //player = GameObject.FindGameObjectWithTag("Player");
+        //playerDamage = player.GetComponent<TankController>().PlayerDamage;
         lifetime = 0;
     }
 
@@ -67,6 +65,6 @@ public class ProjectileController : MonoBehaviour
 
     public virtual float GetDamage()
     {
-        return playerDamage * damageModifier;
+        return GameManager.instance.playerController.PlayerDamage * damageModifier;
     }
 }
