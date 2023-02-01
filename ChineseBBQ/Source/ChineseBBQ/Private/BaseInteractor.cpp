@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "BaseInteractor.h"
+#include "ChineseBBQ/ChineseBBQCharacter.h"
 
 // Sets default values
 ABaseInteractor::ABaseInteractor()
@@ -18,14 +18,16 @@ void ABaseInteractor::BeginPlay()
 	
 }
 
-void ABaseInteractor::Grabbed()
+void ABaseInteractor::OnGrabbing_Implementation(TObjectPtr<AChineseBBQCharacter> character)
 {
 	IsGrabbed = true;
+	GrabbedBy = character;
 }
 
-void ABaseInteractor::Released()
+void ABaseInteractor::OnReleasing_Implementation()
 {
 	IsGrabbed = false;
+	GrabbedBy = nullptr;
 }
 
 // Called every frame

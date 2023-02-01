@@ -135,10 +135,10 @@ void AChineseBBQCharacter::Grab(const FInputActionValue& Value)
 			if (HitActor)
 			{
 				GrabObject = HitActor;
-				GrabObject->Grabbed();
+				GrabObject->OnGrabbing(this);
 				UPrimitiveComponent* GrabableComponent;
-				HitActor->GetGrabableComponent(GrabableComponent);
-				PhysicsHandle->GrabComponentAtLocationWithRotation(GrabableComponent, OutHit.BoneName, OutHit.Component->GetComponentLocation(), FRotator::ZeroRotator);				
+				GrabObject->GetGrabableComponent(GrabableComponent);
+				PhysicsHandle->GrabComponentAtLocationWithRotation(GrabableComponent, OutHit.BoneName, OutHit.Component->GetComponentLocation(), GrabObject->GetActorRotation());
 				isGrabbing = true;
 			}
 		}
@@ -152,7 +152,7 @@ void AChineseBBQCharacter::Release(const FInputActionValue& Value)
 		if (PhysicsHandle->GrabbedComponent)
 		{
 			PhysicsHandle->ReleaseComponent();
-			GrabObject->Released();
+			GrabObject->OnReleasing();
 		}
 		isGrabbing = false;
 	}

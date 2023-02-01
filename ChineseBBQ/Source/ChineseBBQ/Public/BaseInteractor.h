@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "BaseInteractor.generated.h"
 
+class AChineseBBQCharacter;
+
 UCLASS(Blueprintable)
 class CHINESEBBQ_API ABaseInteractor : public AActor
 {
@@ -22,11 +24,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status)
 	bool IsGrabbed = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status)
+		TObjectPtr<AChineseBBQCharacter> GrabbedBy;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void Grabbed();
-	virtual void Released();
+	UFUNCTION(BlueprintNativeEvent)
+	void OnGrabbing(AChineseBBQCharacter* character);
+	virtual void OnGrabbing_Implementation(TObjectPtr<AChineseBBQCharacter> character);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReleasing();
+	virtual void OnReleasing_Implementation();
 	UFUNCTION(BlueprintImplementableEvent)
 	void GetGrabableComponent(UPrimitiveComponent*& GrabableComponent);
 };

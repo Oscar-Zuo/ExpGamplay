@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Blueprint/UserWidget.h"
 #include "ChineseBBQCharacter.generated.h"
 
 class UInputComponent;
@@ -68,10 +69,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Status)
 		bool isGrabbing;
 
+
 public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
+		TObjectPtr<UUserWidget> phoneUI;
 
 	///** Bool for AnimBP to switch to another animation set */
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
