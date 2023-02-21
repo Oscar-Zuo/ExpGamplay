@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class ShipController : MonoBehaviour
     public List<GameObject> hole_list;
     public float decrease_health_speed = 5.0f;
 
+    protected float water_surface_;
     protected int activated_holes_num = 0;
     protected float health;
     public float Health
@@ -21,10 +23,13 @@ public class ShipController : MonoBehaviour
         }
     }
 
+    public float WaterSurface { get => water_surface_; set => water_surface_ = value; }
+
     // Start is called before the first frame update
     void Start()
     {
         health = max_health;
+        water_surface_ = transform.position.y - GetComponent<SpriteRenderer>().bounds.size.y / 2;
     }
 
     void UpdateHealth()
@@ -58,7 +63,7 @@ public class ShipController : MonoBehaviour
         {
             if (inactive_hole_list.Count <= 0)
                 break;
-            HoleController temp = inactive_hole_list[Random.Range(0, inactive_hole_list.Count - 1)];
+            HoleController temp = inactive_hole_list[UnityEngine.Random.Range(0, inactive_hole_list.Count - 1)];
             temp.ActivateHole();
             inactive_hole_list.Remove(temp);
             activated_holes_num++;

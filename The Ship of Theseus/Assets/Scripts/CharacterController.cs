@@ -26,6 +26,7 @@ public class CharacterController : MonoBehaviour
     protected GameObject interacting_object_;
     protected List<GameObject> interactable_list_ = new List<GameObject>();
     private Rigidbody2D rb2D_;
+    private Coroutine interact_timer_;
 
     void Start()
     {
@@ -54,7 +55,10 @@ public class CharacterController : MonoBehaviour
             rb2D_.AddForce(new Vector2(1, 0) * horizontal_input * acceleration * Time.fixedDeltaTime, ForceMode2D.Impulse);
             rb2D_.velocity = rb2D_.velocity.normalized * Mathf.Clamp(rb2D_.velocity.magnitude, 0, max_speed);
         }
+    }
 
+    private void Update()
+    {
         // process interact input
         bool interact_input = is_joystick_ ? Input.GetKey(KeyCode.Joystick1Button0) : Input.GetKey(KeyCode.F);
         if (interact_input && !interacting_object_)
@@ -69,14 +73,20 @@ public class CharacterController : MonoBehaviour
 
     void Interact()
     {
+        if (interacting_object_)
+            interacting_object_ = null;
+        if (interact_timer_ != null)
+             interact_timer_ = null;
+
         foreach (var interactable in interactable_list_)
         {
             if (interactable == null) continue;
             IInteractable interactableController = interactable.GetComponent<IInteractable>();
-            if (interactableController != null) continue;
+            if (interactableController == null) continue;
             if (interactableController.StartInteract(gameObject))
             {
                 interacting_object_ = interactable;
+                interact_timer_ = StartCoroutine(Hold(interactableController.LastTime));
                 break;
             }
         }
@@ -84,7 +94,27 @@ public class CharacterController : MonoBehaviour
 
     void StopInteract()
     {
+        if (!interacting_object_)
+            return;
+        if (interact_timer_ == null)
+            return;
+
+        StopCoroutine(interact_timer_);
+        interacting_object_.GetComponent<IInteractable>().StopInteract(gameObject);
+        interact_timer_ = null;
+        interacting_object_ = null;
+    }
+
+    void FinishInteract()
+    {
+        if (!interacting_object_)
+            return;
         
+        interact_timer_=null;
+        interacting_object_.GetComponent<IInteractable>().FinishInteract(gameObject);
+        interacting_object_=null;
+
+        // UI function here
     }
 
     public void InteractableObjectInRange(GameObject interactable)
@@ -100,7 +130,15 @@ public class CharacterController : MonoBehaviour
     {
         if (interactable_list_.Contains(interactable))
         {
+            if (interacting_object_ == interactable)
+                StopInteract();
             interactable_list_.Remove(interactable);
         }
+    }
+
+    IEnumerator Hold(float hold_time)
+    {
+        yield return new WaitForSeconds(hold_time);
+        FinishInteract();
     }
 }

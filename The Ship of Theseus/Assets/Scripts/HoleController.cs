@@ -59,6 +59,7 @@ public class HoleController : MonoBehaviour, IInteractable
     {
         DeactivateHole();
         GameManager.instance.ship_controller_.PackOneHole();
+        player_in_interacting_ = null;
     }
 
     protected void OnTriggerEnter2D(Collider2D other)
