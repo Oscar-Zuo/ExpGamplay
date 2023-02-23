@@ -81,4 +81,22 @@ public class ShipController : MonoBehaviour
     {
         Health -= decrease_health_speed * Time.deltaTime;
     }
+
+    protected void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag.Equals("Player"))
+        {
+            CharacterController playerController = other.GetComponent<CharacterController>();
+            playerController.InteractableObjectInRange(gameObject);
+        }
+    }
+
+    protected void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag.Equals("Player"))
+        {
+            CharacterController playerController = other.GetComponent<CharacterController>();
+            playerController.InterableObjectLeaveRange(gameObject);
+        }
+    }
 }

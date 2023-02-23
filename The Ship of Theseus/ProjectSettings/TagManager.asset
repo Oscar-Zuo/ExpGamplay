@@ -39,6 +39,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Water
+    uniqueID: 2671644639
+    locked: 0
+  - name: BehindBoat
+    uniqueID: 2508156127
+    locked: 0
+  - name: Boat
+    uniqueID: 1120819953
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

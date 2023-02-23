@@ -11,6 +11,20 @@ public class FloatingController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (is_floating_)
+            Activate();
+    }
+
+    public void Activate()
+    {
+        GetComponent<SpriteRenderer>().sortingLayerName = "BehindBoat";
+        is_floating_= true;
+    }
+
+    public void Deactivate()
+    {
+        GetComponent<SpriteRenderer>().sortingLayerName = "Default";
+        is_floating_= false;
     }
 
     // Update is called once per frame

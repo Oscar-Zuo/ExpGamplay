@@ -212,6 +212,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boat
       objectReference: {fileID: 0}
+    - target: {fileID: 5149630869935248038, guid: b4e625e87f2fb1647813a39a8573835e, type: 3}
+      propertyPath: m_SortingLayer
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 5224575590116979622, guid: b4e625e87f2fb1647813a39a8573835e, type: 3}
       propertyPath: decrease_health_speed
       value: 2
@@ -478,7 +482,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: df0f3e9fdf6c7f95f15ace4200000000
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -559,17 +563,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 524127942267635406, guid: b9a5efa0768836d49969711549e70259, type: 3}
+      propertyPath: m_SortingLayer
+      value: -2
+      objectReference: {fileID: 0}
     - target: {fileID: 778472354415343423, guid: b9a5efa0768836d49969711549e70259, type: 3}
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 778472354415343423, guid: b9a5efa0768836d49969711549e70259, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.28
+      value: 3.2
       objectReference: {fileID: 0}
     - target: {fileID: 778472354415343423, guid: b9a5efa0768836d49969711549e70259, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.32
+      value: -1.25
       objectReference: {fileID: 0}
     - target: {fileID: 778472354415343423, guid: b9a5efa0768836d49969711549e70259, type: 3}
       propertyPath: m_LocalPosition.z
@@ -749,8 +757,8 @@ TilemapRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1623322657
+  m_SortingLayer: -3
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}

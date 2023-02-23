@@ -2,15 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IInteractable
-{
-    float LastTime { get; set; }
-    bool IsActivated{get; set; }
-    bool StartInteract(GameObject player);
-    void StopInteract(GameObject player);
-    void FinishInteract(GameObject player);
-}
-
 public class CharacterController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -24,9 +15,13 @@ public class CharacterController : MonoBehaviour
 
     [SerializeField] protected Collision2D interactCollision;
     protected GameObject interacting_object_;
-    protected List<GameObject> interactable_list_ = new List<GameObject>();
+    public List<GameObject> interactable_list_ = new List<GameObject>();
+    private List<GameObject> item_list_ = new List<GameObject>();
+    [SerializeField] private Transform items_parent_object_;
     private Rigidbody2D rb2D_;
     private Coroutine interact_timer_;
+
+    public List<GameObject> ItemList { get => item_list_; set => item_list_ = value; }
 
     void Start()
     {
@@ -81,12 +76,12 @@ public class CharacterController : MonoBehaviour
         foreach (var interactable in interactable_list_)
         {
             if (interactable == null) continue;
-            IInteractable interactableController = interactable.GetComponent<IInteractable>();
+            InteractableController interactableController = interactable.GetComponent<InteractableController>();
             if (interactableController == null) continue;
             if (interactableController.StartInteract(gameObject))
             {
                 interacting_object_ = interactable;
-                interact_timer_ = StartCoroutine(Hold(interactableController.LastTime));
+                interact_timer_ = StartCoroutine(Hold(interactableController.last_time_));
                 break;
             }
         }
@@ -100,7 +95,7 @@ public class CharacterController : MonoBehaviour
             return;
 
         StopCoroutine(interact_timer_);
-        interacting_object_.GetComponent<IInteractable>().StopInteract(gameObject);
+        interacting_object_.GetComponent<InteractableController>().StopInteract(gameObject);
         interact_timer_ = null;
         interacting_object_ = null;
     }
@@ -111,7 +106,7 @@ public class CharacterController : MonoBehaviour
             return;
         
         interact_timer_=null;
-        interacting_object_.GetComponent<IInteractable>().FinishInteract(gameObject);
+        interacting_object_.GetComponent<InteractableController>().FinishInteract(gameObject);
         interacting_object_=null;
 
         // UI function here
@@ -119,8 +114,8 @@ public class CharacterController : MonoBehaviour
 
     public void InteractableObjectInRange(GameObject interactable)
     {
-        IInteractable interactable_controller = interactable.GetComponent<IInteractable>();
-        if (interactable_controller != null && interactable_controller.IsActivated)
+        InteractableController interactable_controller = interactable.GetComponent<InteractableController>();
+        if (interactable_controller != null && interactable_controller.is_activated_)
         {
             interactable_list_.Add(interactable);
         }
@@ -140,5 +135,14 @@ public class CharacterController : MonoBehaviour
     {
         yield return new WaitForSeconds(hold_time);
         FinishInteract();
+    }
+
+    public void PickupItem(GameObject item)
+    {
+        if (item == null) return;
+        item.transform.parent = items_parent_object_;
+        item.transform.localPosition = Vector2.zero;
+        item.GetComponent<ItemController>().is_activated_ = false;
+        item_list_.Add(item);
     }
 }

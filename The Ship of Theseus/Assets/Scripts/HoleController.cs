@@ -2,18 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HoleController : MonoBehaviour, IInteractable
+public class HoleController : InteractableController
 {
     // Start is called before the first frame update
 
-    public bool is_activated_ = false;
     public Sprite spirte_;
-    public float last_time_;
 
     private GameObject player_in_interacting_ = null;
 
-    public float LastTime { get => last_time_; set=>last_time_=value; }
-    public bool IsActivated { get => is_activated_; set => is_activated_ = value; }
     void Start()
     {
         if (!is_activated_)
@@ -42,41 +38,50 @@ public class HoleController : MonoBehaviour, IInteractable
         is_activated_ = false;
     }
 
-    bool IInteractable.StartInteract(GameObject player)
+    override public bool StartInteract(GameObject player)
     {
         if (!is_activated_ || player_in_interacting_)
             return false;
+
+        bool has_plank = false;
+        var player_items = player.GetComponent<CharacterController>().ItemList;
+        foreach (var item in player_items)
+        {
+            var item_controller = item.GetComponent<ItemController>();
+            if (item_controller && item_controller.ItemName == "Plank")
+            {
+                has_plank = true;
+                break;
+            }
+        }
+        if (!has_plank)
+            return false;
+
         player_in_interacting_ = player;
         return true;
     }
 
-    void IInteractable.StopInteract(GameObject player)
+    override public void StopInteract(GameObject player)
     {
         player_in_interacting_ = null;
     }
 
-    void IInteractable.FinishInteract(GameObject player)
+    override public void FinishInteract(GameObject player)
     {
         DeactivateHole();
         GameManager.instance.ship_controller_.PackOneHole();
+        var player_items = player.GetComponent<CharacterController>().ItemList;
+        foreach ( var item in player_items )
+        {
+            var item_controller = item.GetComponent<ItemController>();
+            if (item_controller && item_controller.ItemName == "Plank")
+            {
+                player_items.Remove(item);
+                Destroy(item);
+                break;
+            }
+        }
+
         player_in_interacting_ = null;
-    }
-
-    protected void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag.Equals("Player"))
-        {
-            CharacterController playerController = other.GetComponent<CharacterController>();
-            playerController.InteractableObjectInRange(gameObject);
-        }
-    }
-
-    protected void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.tag.Equals("Player"))
-        {
-            CharacterController playerController = other.GetComponent<CharacterController>();
-            playerController.InterableObjectLeaveRange(gameObject);
-        }
     }
 }
