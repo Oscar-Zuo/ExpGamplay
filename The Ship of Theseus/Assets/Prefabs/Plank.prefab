@@ -67,6 +67,9 @@ MonoBehaviour:
   is_activated_: 1
   last_time_: 0
   item_name_: Plank
+  is_tossing_: 0
+  object_speed_: 5
+  toss_height_: 3
 --- !u!212 &524127942267635406
 SpriteRenderer:
   m_ObjectHideFlags: 0

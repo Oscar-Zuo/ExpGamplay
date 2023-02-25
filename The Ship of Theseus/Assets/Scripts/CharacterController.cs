@@ -12,10 +12,14 @@ public class CharacterController : MonoBehaviour
     public float max_swining_speed_ = 2.0f;
     public bool is_on_boat_ = true;
     public bool is_joystick_ = false;
-
-    [SerializeField] protected Collision2D interactCollision;
-    protected GameObject interacting_object_;
     public List<GameObject> interactable_list_ = new List<GameObject>();
+    public float cross_hair_speed_ = 10.0f;
+    public float max_toss_range_ = 10.0f;
+
+    [SerializeField] protected Collision2D interact_collision_;
+    [SerializeField] protected GameObject crosshair_;
+    protected GameObject interacting_object_;
+    protected bool is_tossing_ = false;
     private List<GameObject> item_list_ = new List<GameObject>();
     [SerializeField] private Transform items_parent_object_;
     private Rigidbody2D rb2D_;
@@ -25,13 +29,20 @@ public class CharacterController : MonoBehaviour
 
     void Start()
     {
-        rb2D_= GetComponent<Rigidbody2D>();
+        rb2D_ = GetComponent<Rigidbody2D>();
+        if (crosshair_ != null)
+        {
+            crosshair_.GetComponent<SpriteRenderer>().enabled = false;
+        }
     }
 
     // Update is called once per frame
 
     private void FixedUpdate()
     {
+        if (is_tossing_)
+            return;
+
         float acceleration = is_on_boat_ ? walking_acceleration_ : swining_acceleration_;
         float max_speed = is_on_boat_ ? max_walking_speed_ : max_swining_speed_;
 
@@ -44,7 +55,7 @@ public class CharacterController : MonoBehaviour
             rb2D_.velocity = rb2D_.velocity.normalized * Mathf.Clamp(rb2D_.velocity.magnitude, 0, max_speed);
         }
 
-        horizontal_input = is_joystick_ ? Input.GetAxis("JoystickHorizontal"): Input.GetAxis("Horizontal");
+        horizontal_input = is_joystick_ ? Input.GetAxis("JoystickHorizontal") : Input.GetAxis("Horizontal");
         if (horizontal_input != 0)
         {
             rb2D_.AddForce(new Vector2(1, 0) * horizontal_input * acceleration * Time.fixedDeltaTime, ForceMode2D.Impulse);
@@ -64,14 +75,45 @@ public class CharacterController : MonoBehaviour
         {
             StopInteract();
         }
-    }
 
+        bool toss_input = is_joystick_ ? Input.GetKey(KeyCode.Joystick1Button1) : Input.GetKey(KeyCode.Space);
+        if (toss_input && !is_tossing_)
+        {
+            StartTossing();
+        }
+        if (!toss_input && is_tossing_)
+        {
+            StopTossing();
+        }
+
+        if (is_tossing_)
+        {
+            float vertical_input, horizontal_input;
+            vertical_input = is_joystick_ ? Input.GetAxis("JoystickVertical") : Input.GetAxis("Vertical");
+            if (vertical_input != 0)
+            {
+                crosshair_.transform.Translate(Vector2.up * vertical_input * Time.deltaTime * cross_hair_speed_);
+            }
+
+            horizontal_input = is_joystick_ ? Input.GetAxis("JoystickHorizontal") : Input.GetAxis("Horizontal");
+            if (horizontal_input != 0)
+            {
+                crosshair_.transform.Translate(Vector2.right * horizontal_input * Time.deltaTime * cross_hair_speed_);
+            }
+
+            if (Vector2.Distance(transform.position, crosshair_.transform.position)> max_toss_range_)
+            {
+                Vector3 direction = (crosshair_.transform.position - transform.position).normalized;
+                crosshair_.transform.position = transform.position + direction * max_toss_range_;
+            }
+        }
+    }
     void Interact()
     {
         if (interacting_object_)
             interacting_object_ = null;
         if (interact_timer_ != null)
-             interact_timer_ = null;
+            interact_timer_ = null;
 
         foreach (var interactable in interactable_list_)
         {
@@ -104,10 +146,10 @@ public class CharacterController : MonoBehaviour
     {
         if (!interacting_object_)
             return;
-        
-        interact_timer_=null;
+
+        interact_timer_ = null;
         interacting_object_.GetComponent<InteractableController>().FinishInteract(gameObject);
-        interacting_object_=null;
+        interacting_object_ = null;
 
         // UI function here
     }
@@ -144,5 +186,46 @@ public class CharacterController : MonoBehaviour
         item.transform.localPosition = Vector2.zero;
         item.GetComponent<ItemController>().is_activated_ = false;
         item_list_.Add(item);
+    }
+
+    void DropItem()
+    {
+        if (item_list_.Count <= 0)
+            return;
+        GameObject item = item_list_[item_list_.Count - 1];
+        item_list_.Remove(item);
+        item.GetComponent<ItemController>().is_activated_ = true;
+        item.transform.parent = null;
+        item.transform.position = transform.position;
+    }
+    void StartTossing()
+    {
+        is_tossing_ = true;
+        crosshair_.transform.localPosition = Vector2.zero;
+        crosshair_.GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    void StopTossing()
+    {
+        if (item_list_.Count > 0)
+        {
+            if (Vector2.Distance(transform.position, crosshair_.transform.position) <= 0.1)
+            {
+                DropItem();
+                return;
+            }
+            else
+            {
+                GameObject item = item_list_[item_list_.Count - 1];
+                item_list_.Remove(item);
+                item.GetComponent<ItemController>().is_activated_ = true;
+                item.transform.parent = null;
+                item.GetComponent<ItemController>().StartTossing(crosshair_.transform.position);
+            }
+        }
+
+        is_tossing_ = false;
+        crosshair_.transform.localPosition = Vector2.zero;
+        crosshair_.GetComponent<SpriteRenderer>().enabled = false;
     }
 }
