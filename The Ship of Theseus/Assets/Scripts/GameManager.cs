@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,9 +18,12 @@ public class GameManager : MonoBehaviour
     public float plank_nails_spawn_rate_ = 0.15f;
     public float bomb_spawn_rate_ = 0.05f;
     public float pirates_spawn_interval_ = 20.0f;
-    public float game_length_ = 180.0f;
+    public int game_length_ = 180;
+    public TMPro.TextMeshProUGUI ui_countdown_;
 
     public static GameManager instance_;
+
+    int remaining_time;
     protected float screen_bound_x_ = 10, screen_bound_y_ = 4.5f;
 
     public static GameObject GetLandedPirateShip(Vector2 position)
@@ -68,13 +72,19 @@ public class GameManager : MonoBehaviour
 
     IEnumerator TimeLimit()
     {
-        yield return new WaitForSeconds(game_length_);
-        SceneManager.LoadScene("WinScene");
+        while(remaining_time>0)
+        {
+            ui_countdown_.text = string.Format("{0}:{1:D2}", remaining_time / 60, remaining_time % 60);
+            yield return new WaitForSeconds(1);
+            remaining_time -= 1;
+        }
+        SceneManager.LoadScene("Win");
     }
 
     void Start()
     {
         instance_ = this;
+        remaining_time = game_length_;
         StartCoroutine(GenerateItems());
         StartCoroutine(GeneratePirates());
         StartCoroutine(TimeLimit());
