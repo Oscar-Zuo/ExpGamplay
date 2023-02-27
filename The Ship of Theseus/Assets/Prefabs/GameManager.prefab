@@ -44,3 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ca7f975c583e024584202f0e4fef5f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship_controller_: {fileID: 0}
+  player_list_: []
+  prirates_path_list_: []
+  plank_: {fileID: 7179588302147975904, guid: b9a5efa0768836d49969711549e70259, type: 3}
+  bomb_: {fileID: 79682289373250834, guid: d021d10455ded5744a1be15d5d8d3f3a, type: 3}
+  pirate_ship_: {fileID: 7521505395096024251, guid: bc83890c5c98b0d4ca47209c0f50a433, type: 3}
+  nails_: {fileID: 7179588302147975904, guid: 50fb41a85a26b564cbb7af3b8971d419, type: 3}
+  plank_nails_spawn_rate_: 0.15
+  bomb_spawn_rate_: 0.05
+  pirates_spawn_interval_: 20
+  game_length_: 180

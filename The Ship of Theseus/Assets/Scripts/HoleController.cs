@@ -48,7 +48,7 @@ public class HoleController : InteractableController
         foreach (var item in player_items)
         {
             var item_controller = item.GetComponent<ItemController>();
-            if (item_controller && item_controller.ItemName == "Plank")
+            if (item_controller && item_controller.ItemName == "RepairKit")
             {
                 has_plank = true;
                 break;
@@ -69,12 +69,12 @@ public class HoleController : InteractableController
     override public void FinishInteract(GameObject player)
     {
         DeactivateHole();
-        GameManager.instance.ship_controller_.PackOneHole();
+        GameManager.instance_.ship_controller_.PackOneHole();
         var player_items = player.GetComponent<CharacterController>().ItemList;
         foreach ( var item in player_items )
         {
             var item_controller = item.GetComponent<ItemController>();
-            if (item_controller && item_controller.ItemName == "Plank")
+            if (item_controller && item_controller.ItemName == "RepairKit")
             {
                 player_items.Remove(item);
                 Destroy(item);

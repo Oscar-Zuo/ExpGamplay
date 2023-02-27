@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class CharacterController : MonoBehaviour
 {
@@ -15,7 +17,9 @@ public class CharacterController : MonoBehaviour
     public List<GameObject> interactable_list_ = new List<GameObject>();
     public float cross_hair_speed_ = 10.0f;
     public float max_toss_range_ = 10.0f;
+    public List<GameObject> ItemList { get => item_list_; set => item_list_ = value; }
 
+    [SerializeField] protected GameObject ui_;
     [SerializeField] protected Collision2D interact_collision_;
     [SerializeField] protected GameObject crosshair_;
     protected GameObject interacting_object_;
@@ -24,8 +28,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private Transform items_parent_object_;
     private Rigidbody2D rb2D_;
     private Coroutine interact_timer_;
-
-    public List<GameObject> ItemList { get => item_list_; set => item_list_ = value; }
+    private bool last_interact_input_  = false;
 
     void Start()
     {
@@ -34,6 +37,8 @@ public class CharacterController : MonoBehaviour
         {
             crosshair_.GetComponent<SpriteRenderer>().enabled = false;
         }
+
+        ui_.SetActive(false);
     }
 
     // Update is called once per frame
@@ -67,7 +72,7 @@ public class CharacterController : MonoBehaviour
     {
         // process interact input
         bool interact_input = is_joystick_ ? Input.GetKey(KeyCode.Joystick1Button0) : Input.GetKey(KeyCode.F);
-        if (interact_input && !interacting_object_)
+        if (interact_input && !last_interact_input_ && !interacting_object_)
         {
             Interact();
         }
@@ -75,6 +80,7 @@ public class CharacterController : MonoBehaviour
         {
             StopInteract();
         }
+        last_interact_input_ = interact_input;
 
         bool toss_input = is_joystick_ ? Input.GetKey(KeyCode.Joystick1Button1) : Input.GetKey(KeyCode.Space);
         if (toss_input && !is_tossing_)
@@ -83,7 +89,7 @@ public class CharacterController : MonoBehaviour
         }
         if (!toss_input && is_tossing_)
         {
-            StopTossing();
+            FinishTossing();
         }
 
         if (is_tossing_)
@@ -175,7 +181,18 @@ public class CharacterController : MonoBehaviour
 
     IEnumerator Hold(float hold_time)
     {
-        yield return new WaitForSeconds(hold_time);
+        float wait_time = 0;
+        var slider = ui_.GetComponent<UnityEngine.UI.Slider>();
+        ui_.SetActive(true);
+
+        while(wait_time< hold_time)
+        {
+            wait_time += Time.deltaTime;
+            if (slider != null)
+                slider.value = wait_time / hold_time;
+            yield return null;
+        }
+        ui_.SetActive(false);
         FinishInteract();
     }
 
@@ -183,8 +200,9 @@ public class CharacterController : MonoBehaviour
     {
         if (item == null) return;
         item.transform.parent = items_parent_object_;
-        item.transform.localPosition = Vector2.zero;
+        item.transform.localPosition = new Vector2(0, 0.5f* item_list_.Count);
         item.GetComponent<ItemController>().is_activated_ = false;
+        item.GetComponent<SpriteRenderer>().sortingLayerName = "Default";
         item_list_.Add(item);
     }
 
@@ -194,10 +212,13 @@ public class CharacterController : MonoBehaviour
             return;
         GameObject item = item_list_[item_list_.Count - 1];
         item_list_.Remove(item);
-        item.GetComponent<ItemController>().is_activated_ = true;
+        ItemController itemController = item.GetComponent<ItemController>();
+        itemController.is_activated_ = true;
+        itemController.Landed(false);
         item.transform.parent = null;
         item.transform.position = transform.position;
     }
+
     void StartTossing()
     {
         is_tossing_ = true;
@@ -205,7 +226,7 @@ public class CharacterController : MonoBehaviour
         crosshair_.GetComponent<SpriteRenderer>().enabled = true;
     }
 
-    void StopTossing()
+    void FinishTossing()
     {
         if (item_list_.Count > 0)
         {
@@ -218,9 +239,12 @@ public class CharacterController : MonoBehaviour
             {
                 GameObject item = item_list_[item_list_.Count - 1];
                 item_list_.Remove(item);
-                item.GetComponent<ItemController>().is_activated_ = true;
-                item.transform.parent = null;
-                item.GetComponent<ItemController>().StartTossing(crosshair_.transform.position);
+                if (item)
+                {
+                    item.GetComponent<ItemController>().is_activated_ = true;
+                    item.transform.parent = null;
+                    item.GetComponent<ItemController>().StartTossing(crosshair_.transform.position);
+                }
             }
         }
 

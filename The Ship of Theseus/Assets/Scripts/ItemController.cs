@@ -31,7 +31,7 @@ public class ItemController : InteractableController
         return;
     }
 
-    public void StartTossing(Vector2 position)
+    virtual public void StartTossing(Vector2 position)
     {
         is_tossing_ = true;
         StartCoroutine(Toss(position));
@@ -57,6 +57,41 @@ public class ItemController : InteractableController
             yield return null;
         }
         is_tossing_ = false;
+
+        Landed(true);
+    }
+
+    virtual public void Landed(bool tossed)
+    {
+        FloatingController floatingController = GetComponent<FloatingController>();
+        if (GameManager.instance_.ship_controller_.IsOnShip(transform.position))
+        {
+            if (floatingController != null)
+            {
+                floatingController.Deactivate();
+            }
+            GetComponent<SpriteRenderer>().sortingLayerName = "Default";
+            transform.parent = GameManager.instance_.ship_controller_.gameObject.transform;
+        }
+        else
+        {
+            var pirate = GameManager.GetLandedPirateShip(transform.position);
+            if (pirate != null)
+            {
+                if (floatingController != null)
+                {
+                    floatingController.Deactivate();
+                }
+                GetComponent<SpriteRenderer>().sortingLayerName = "Default";
+                transform.parent = pirate.transform;
+            }
+
+            else if (floatingController != null)
+            {
+                floatingController.Activate();
+                GetComponent<SpriteRenderer>().sortingLayerName = "BehindBoat";
+            }
+        }
     }
 
     // Update is called once per frame
