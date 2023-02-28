@@ -28,9 +28,9 @@ public class CraftTableController : InteractableController
             ItemController item_controller = item.GetComponent<ItemController>();
             if (item_controller == null) continue;
 
-            if (item_controller.name == "Nails")
+            if (item_controller.ItemName == "Nails")
                 has_nails = true;
-            else if (item_controller.name == "Plank")
+            else if (item_controller.ItemName == "Plank")
                 has_plank = true;
 
             if (has_nails && has_plank)
@@ -52,7 +52,7 @@ public class CraftTableController : InteractableController
             ItemController item_controller = item.GetComponent<ItemController>();
             if (item_controller == null) continue;
 
-            if (item_controller.name == "Nails")
+            if (item_controller.ItemName == "Nails")
             {
                 player_controller.ItemList.Remove(item);
                 Destroy(item);
@@ -66,7 +66,7 @@ public class CraftTableController : InteractableController
             ItemController item_controller = item.GetComponent<ItemController>();
             if (item_controller == null) continue;
 
-            if (item_controller.name == "Plank")
+            if (item_controller.ItemName == "Plank")
             {
                 player_controller.ItemList.Remove(item);
                 Destroy(item);
