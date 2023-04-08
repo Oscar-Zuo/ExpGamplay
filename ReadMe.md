@@ -1,0 +1,1 @@
+This repository contains projects I made for Experienmental Gameplay class. I made every project in one or two weeks.
