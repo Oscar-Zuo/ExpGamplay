@@ -9,9 +9,11 @@ public class HoleController : InteractableController
     public Sprite spirte_;
 
     private GameObject player_in_interacting_ = null;
+    private AudioSource audio_source_;
 
     void Start()
     {
+        audio_source_ = GetComponent<AudioSource>();
         if (!is_activated_)
         {
             DeactivateHole();
@@ -29,6 +31,7 @@ public class HoleController : InteractableController
         GetComponent<SpriteRenderer>().sprite = spirte_;
         GetComponent<Collider2D>().enabled = true;
         is_activated_ = true;
+        audio_source_.Play();
     }
 
     public void DeactivateHole()
@@ -36,6 +39,7 @@ public class HoleController : InteractableController
         GetComponent<SpriteRenderer>().sprite = null;
         GetComponent<Collider2D>().enabled = false;
         is_activated_ = false;
+        audio_source_.Stop();
     }
 
     override public bool StartInteract(GameObject player)

@@ -395,6 +395,7 @@ GameObject:
   - component: {fileID: 5894267481406647450}
   - component: {fileID: 4951533980273987180}
   - component: {fileID: 2075051304016110355}
+  - component: {fileID: -2980145970659287342}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -438,11 +439,12 @@ MonoBehaviour:
   max_swining_speed_: 4
   is_on_boat_: 1
   is_joystick_: 0
-  interactable_list_: []
   cross_hair_speed_: 5
   max_toss_range_: 9
+  is_using_fishing_pole_: 0
   ui_: {fileID: 3034430185160503746}
   crosshair_: {fileID: 4336537699051305767}
+  hook_object_: {fileID: 5867520241262840558, guid: 07e364f75075f3646a51c9fb4c40789a, type: 3}
   items_parent_object_: {fileID: 2372916398009535456}
 --- !u!212 &5894267481406647450
 SpriteRenderer:
@@ -485,7 +487,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: -1094117326, guid: cf5dce7802f0c704c99ad6bf40b8a1dc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -533,6 +535,26 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!95 &-2980145970659287342
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6115472442960986329}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &8300387901412556562
 GameObject:
   m_ObjectHideFlags: 0

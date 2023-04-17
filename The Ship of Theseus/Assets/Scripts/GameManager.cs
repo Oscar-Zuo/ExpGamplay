@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,15 +19,16 @@ public class GameManager : MonoBehaviour
     public float plank_nails_spawn_rate_ = 0.15f;
     public float bomb_spawn_rate_ = 0.05f;
     public float pirates_spawn_interval_ = 20.0f;
-    public int game_length_ = 180;
-    public TMPro.TextMeshProUGUI ui_countdown_;
+    public int target_progress_ = 30;
+    public GameObject progress_bar;
 
     public static GameManager instance_;
 
     int remaining_time;
     protected float screen_bound_x_ = 10, screen_bound_y_ = 4.5f;
+    private int progress_ = 0;
 
-    public static GameObject GetLandedPirateShip(Vector2 position)
+    public static GameObject GetPirateShipByPosition(Vector2 position)
     {
         var pirate_boats = GameObject.FindGameObjectsWithTag("PirateBoat");
         foreach (var pirate_boat in pirate_boats)
@@ -38,6 +40,14 @@ public class GameManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public void IncreaseProgress(int num)
+    {
+        progress_ += num;
+        if (progress_ >= target_progress_)
+            SceneManager.LoadScene("Win");
+        progress_bar.GetComponent<UnityEngine.UI.Slider>().value = (float)progress_ / target_progress_;
     }
 
     IEnumerator GenerateItems()
@@ -70,24 +80,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    IEnumerator TimeLimit()
-    {
-        while(remaining_time>0)
-        {
-            ui_countdown_.text = string.Format("{0}:{1:D2}", remaining_time / 60, remaining_time % 60);
-            yield return new WaitForSeconds(1);
-            remaining_time -= 1;
-        }
-        SceneManager.LoadScene("Win");
-    }
-
     void Start()
     {
         instance_ = this;
-        remaining_time = game_length_;
         StartCoroutine(GenerateItems());
         StartCoroutine(GeneratePirates());
-        StartCoroutine(TimeLimit());
     }
 
     // Update is called once per frame

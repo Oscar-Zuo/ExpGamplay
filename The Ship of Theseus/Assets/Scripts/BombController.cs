@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Recorder.Input;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,8 +12,11 @@ public class BombController : ItemController
     Animator boom_animator_;
     float animation_speed_;
 
+    [SerializeField] protected AudioClip boom_audio_;
+
     private void Start()
     {
+        audio_source_ = GetComponent<AudioSource>();
         boom_animator_ = GetComponent<Animator>();
         AnimationClip[] clips = boom_animator_.runtimeAnimatorController.animationClips;
         animation_speed_ = clips[0].length / animation_lasting_speed_;
@@ -26,18 +30,23 @@ public class BombController : ItemController
         boom_animator_.SetTrigger("Boom");
         yield return new WaitForSeconds(animation_lasting_speed_);
 
-        if (GameManager.instance_.ship_controller_.IsOnShip(transform.position))
+        if (GameManager.instance_.ship_controller_.IsOnShip(GetComponent<Collider2D>()))
         {
             GameManager.instance_.ship_controller_.Health -= damage;
         }
         else
         {
-            GameObject pirate = GameManager.GetLandedPirateShip(transform.position);
+            GameObject pirate = GameManager.GetPirateShipByPosition(transform.position);
             if (pirate!=null)
             {
                 pirate.GetComponent<PiratesController>().Health--;
             }
         }
+        audio_source_.clip = boom_audio_;
+        audio_source_.Play();
+        GetComponent<SpriteRenderer>().enabled = false;
+        boom_animator_.enabled = false;
+        yield return new WaitForSeconds(boom_audio_.length);
         Destroy(gameObject);
     }
 

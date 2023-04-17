@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using static UnityEditor.Progress;
 
 public class CharacterController : MonoBehaviour
 {
@@ -14,21 +17,24 @@ public class CharacterController : MonoBehaviour
     public float max_swining_speed_ = 2.0f;
     public bool is_on_boat_ = true;
     public bool is_joystick_ = false;
-    public List<GameObject> interactable_list_ = new List<GameObject>();
+    [NonSerialized] public List<GameObject> interactable_list_ = new List<GameObject>();
     public float cross_hair_speed_ = 10.0f;
     public float max_toss_range_ = 10.0f;
     public List<GameObject> ItemList { get => item_list_; set => item_list_ = value; }
+    public bool is_using_fishing_pole_ = false;
 
     [SerializeField] protected GameObject ui_;
     [SerializeField] protected Collision2D interact_collision_;
     [SerializeField] protected GameObject crosshair_;
+    [SerializeField] protected GameObject hook_object_;
     protected GameObject interacting_object_;
     protected bool is_tossing_ = false;
     private List<GameObject> item_list_ = new List<GameObject>();
     [SerializeField] private Transform items_parent_object_;
     private Rigidbody2D rb2D_;
     private Coroutine interact_timer_;
-    private bool last_interact_input_  = false;
+    private bool last_interact_input_ = false;
+    private Animator animator;
 
     void Start()
     {
@@ -39,6 +45,8 @@ public class CharacterController : MonoBehaviour
         }
 
         ui_.SetActive(false);
+
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -66,6 +74,14 @@ public class CharacterController : MonoBehaviour
             rb2D_.AddForce(new Vector2(1, 0) * horizontal_input * acceleration * Time.fixedDeltaTime, ForceMode2D.Impulse);
             rb2D_.velocity = rb2D_.velocity.normalized * Mathf.Clamp(rb2D_.velocity.magnitude, 0, max_speed);
         }
+
+        // animator setting
+        if (rb2D_.velocity.sqrMagnitude >= 0.05)
+            animator.SetBool("IsMoving", true);
+        else
+            animator.SetBool("IsMoving", false);
+        animator.SetFloat("Horizontal", rb2D_.velocity.y);
+        animator.SetFloat("Vertical", rb2D_.velocity.x);
     }
 
     private void Update()
@@ -107,7 +123,7 @@ public class CharacterController : MonoBehaviour
                 crosshair_.transform.Translate(Vector2.right * horizontal_input * Time.deltaTime * cross_hair_speed_);
             }
 
-            if (Vector2.Distance(transform.position, crosshair_.transform.position)> max_toss_range_)
+            if (Vector2.Distance(transform.position, crosshair_.transform.position) > max_toss_range_)
             {
                 Vector3 direction = (crosshair_.transform.position - transform.position).normalized;
                 crosshair_.transform.position = transform.position + direction * max_toss_range_;
@@ -163,7 +179,7 @@ public class CharacterController : MonoBehaviour
     public void InteractableObjectInRange(GameObject interactable)
     {
         InteractableController interactable_controller = interactable.GetComponent<InteractableController>();
-        if (interactable_controller != null && interactable_controller.is_activated_)
+        if (interactable_controller != null)
         {
             interactable_list_.Add(interactable);
         }
@@ -179,13 +195,23 @@ public class CharacterController : MonoBehaviour
         }
     }
 
+    public void EnterBoat()
+    {
+        animator.SetBool("OnBoat", true);
+    }
+
+    public void LeaveBoat()
+    {
+        animator.SetBool("OnBoat", false);
+    }
+
     IEnumerator Hold(float hold_time)
     {
         float wait_time = 0;
         var slider = ui_.GetComponent<UnityEngine.UI.Slider>();
         ui_.SetActive(true);
 
-        while(wait_time< hold_time)
+        while (wait_time < hold_time)
         {
             wait_time += Time.deltaTime;
             if (slider != null)
@@ -200,18 +226,14 @@ public class CharacterController : MonoBehaviour
     {
         if (item == null) return;
         item.transform.parent = items_parent_object_;
-        item.transform.localPosition = new Vector2(0, 0.5f* item_list_.Count);
+        item.transform.localPosition = new Vector2(0, 0.5f * item_list_.Count);
         item.GetComponent<ItemController>().is_activated_ = false;
         item.GetComponent<SpriteRenderer>().sortingLayerName = "Default";
         item_list_.Add(item);
     }
 
-    void DropItem()
+    void DropItem(GameObject item)
     {
-        if (item_list_.Count <= 0)
-            return;
-        GameObject item = item_list_[item_list_.Count - 1];
-        item_list_.Remove(item);
         ItemController itemController = item.GetComponent<ItemController>();
         itemController.is_activated_ = true;
         itemController.Landed(false);
@@ -224,29 +246,48 @@ public class CharacterController : MonoBehaviour
         is_tossing_ = true;
         crosshair_.transform.localPosition = Vector2.zero;
         crosshair_.GetComponent<SpriteRenderer>().enabled = true;
+        if (is_using_fishing_pole_)
+        {
+            crosshair_.GetComponent<SpriteRenderer>().color = Color.blue;
+        }
+        else
+            crosshair_.GetComponent<SpriteRenderer>().color = Color.red;
+    }
+
+    void TossOrDropItem()
+    {
+        GameObject item = null;
+        while (!item && item_list_.Count > 0)
+        {
+            item = item_list_[item_list_.Count - 1];
+            item_list_.Remove(item);
+        } 
+
+        if (!item)
+            return;
+        if (Vector2.Distance(transform.position, crosshair_.transform.position) <= 0.1)
+        {
+            DropItem(item);
+        }
+        else
+        {
+            item.GetComponent<ItemController>().is_activated_ = true;
+            item.transform.parent = null;
+            item.GetComponent<ItemController>().StartTossing(crosshair_.transform.position);
+        }
     }
 
     void FinishTossing()
     {
-        if (item_list_.Count > 0)
+        if (is_using_fishing_pole_)
         {
-            if (Vector2.Distance(transform.position, crosshair_.transform.position) <= 0.1)
-            {
-                DropItem();
-                return;
-            }
-            else
-            {
-                GameObject item = item_list_[item_list_.Count - 1];
-                item_list_.Remove(item);
-                if (item)
-                {
-                    item.GetComponent<ItemController>().is_activated_ = true;
-                    item.transform.parent = null;
-                    item.GetComponent<ItemController>().StartTossing(crosshair_.transform.position);
-                }
-            }
+            GameObject hook= Instantiate(hook_object_, transform.position, Quaternion.identity);
+            HookController hook_controller = hook.GetComponent<HookController>();
+            hook_controller.StartTossing(crosshair_.transform.position);
+            hook_controller.start_position_ = transform.position;
         }
+        else
+            TossOrDropItem();
 
         is_tossing_ = false;
         crosshair_.transform.localPosition = Vector2.zero;

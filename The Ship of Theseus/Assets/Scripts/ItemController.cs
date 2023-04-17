@@ -11,6 +11,10 @@ public class ItemController : InteractableController
 
     public string ItemName { get => item_name_; set => item_name_ = value; }
 
+    [SerializeField] protected AudioClip water_audio_;
+    [SerializeField] protected AudioClip wood_audio_;
+
+    protected AudioSource audio_source_;
     override public void FinishInteract(GameObject player)
     {
         player.GetComponent<CharacterController>().PickupItem(gameObject);
@@ -64,7 +68,7 @@ public class ItemController : InteractableController
     virtual public void Landed(bool tossed)
     {
         FloatingController floatingController = GetComponent<FloatingController>();
-        if (GameManager.instance_.ship_controller_.IsOnShip(transform.position))
+        if (GameManager.instance_.ship_controller_.IsOnShip(GetComponent<Collider2D>()))
         {
             if (floatingController != null)
             {
@@ -72,10 +76,15 @@ public class ItemController : InteractableController
             }
             GetComponent<SpriteRenderer>().sortingLayerName = "Default";
             transform.parent = GameManager.instance_.ship_controller_.gameObject.transform;
+            if (audio_source_ && wood_audio_)
+            {
+                audio_source_.clip = wood_audio_;
+                audio_source_.Play();
+            }
         }
         else
         {
-            var pirate = GameManager.GetLandedPirateShip(transform.position);
+            var pirate = GameManager.GetPirateShipByPosition(transform.position);
             if (pirate != null)
             {
                 if (floatingController != null)
@@ -84,14 +93,29 @@ public class ItemController : InteractableController
                 }
                 GetComponent<SpriteRenderer>().sortingLayerName = "Default";
                 transform.parent = pirate.transform;
+                if (audio_source_ && wood_audio_)
+                {
+                    audio_source_.clip = wood_audio_;
+                    audio_source_.Play();
+                }
             }
 
             else if (floatingController != null)
             {
                 floatingController.Activate();
                 GetComponent<SpriteRenderer>().sortingLayerName = "BehindBoat";
+                if (audio_source_ && water_audio_)
+                {
+                    audio_source_.clip = water_audio_;
+                    audio_source_.Play();
+                }
             }
         }
+    }
+
+    private void Start()
+    {
+        audio_source_ = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame

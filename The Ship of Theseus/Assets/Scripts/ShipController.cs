@@ -76,6 +76,7 @@ public class ShipController : MonoBehaviour
     {
         health_ += max_health_ / hole_list_.Count;
         --activated_holes_num_;
+        GameManager.instance_.IncreaseProgress(1);
     }
 
     // Update is called once per frame
@@ -84,13 +85,13 @@ public class ShipController : MonoBehaviour
         Health -= decrease_health_speed_ * Time.deltaTime;
     }
 
-    public bool IsOnShip(Vector2 position)
+    public bool IsOnShip(Collider2D other)
     {
         Collider2D item_collider = GetComponent<PolygonCollider2D>();
         if (!item_collider)
             return false;
 
-        return item_collider.OverlapPoint(position);
+        return item_collider.IsTouching(other);
     }
 
     protected void OnTriggerEnter2D(Collider2D other)
@@ -98,7 +99,7 @@ public class ShipController : MonoBehaviour
         if (other.tag.Equals("Player"))
         {
             CharacterController playerController = other.GetComponent<CharacterController>();
-            playerController.InteractableObjectInRange(gameObject);
+            playerController.EnterBoat();
         }
     }
 
@@ -107,7 +108,7 @@ public class ShipController : MonoBehaviour
         if (other.tag.Equals("Player"))
         {
             CharacterController playerController = other.GetComponent<CharacterController>();
-            playerController.InterableObjectLeaveRange(gameObject);
+            playerController.LeaveBoat();
         }
     }
 }
