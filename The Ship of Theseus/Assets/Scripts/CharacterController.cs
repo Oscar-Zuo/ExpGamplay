@@ -61,14 +61,15 @@ public class CharacterController : MonoBehaviour
 
         // process move input
         float vertical_input, horizontal_input;
-        vertical_input = is_joystick_ ? Input.GetAxis("JoystickVertical") : Input.GetAxis("Vertical");
+        bool is_joystick_connected = Input.GetJoystickNames().Length > 0;
+        vertical_input = is_joystick_ ? is_joystick_connected? Input.GetAxis("JoystickVertical") : Input.GetAxis("Character2Vertical") : Input.GetAxis("Vertical");
         if (vertical_input != 0)
         {
             rb2D_.AddForce(new Vector2(0, 1) * vertical_input * acceleration * Time.fixedDeltaTime, ForceMode2D.Impulse);
             rb2D_.velocity = rb2D_.velocity.normalized * Mathf.Clamp(rb2D_.velocity.magnitude, 0, max_speed);
         }
 
-        horizontal_input = is_joystick_ ? Input.GetAxis("JoystickHorizontal") : Input.GetAxis("Horizontal");
+        horizontal_input = is_joystick_? is_joystick_connected? Input.GetAxis("JoystickHorizontal") : Input.GetAxis("Character2Horizontal") : Input.GetAxis("Horizontal");
         if (horizontal_input != 0)
         {
             rb2D_.AddForce(new Vector2(1, 0) * horizontal_input * acceleration * Time.fixedDeltaTime, ForceMode2D.Impulse);
@@ -87,7 +88,8 @@ public class CharacterController : MonoBehaviour
     private void Update()
     {
         // process interact input
-        bool interact_input = is_joystick_ ? Input.GetKey(KeyCode.Joystick1Button0) : Input.GetKey(KeyCode.F);
+        bool is_joystick_connected = Input.GetJoystickNames().Length > 0;
+        bool interact_input = is_joystick_ ? (is_joystick_connected ? Input.GetKey(KeyCode.Joystick1Button0) : Input.GetKey(KeyCode.KeypadPeriod)) : Input.GetKey(KeyCode.F);
         if (interact_input && !last_interact_input_ && !interacting_object_)
         {
             Interact();
@@ -98,7 +100,7 @@ public class CharacterController : MonoBehaviour
         }
         last_interact_input_ = interact_input;
 
-        bool toss_input = is_joystick_ ? Input.GetKey(KeyCode.Joystick1Button1) : Input.GetKey(KeyCode.Space);
+        bool toss_input = is_joystick_ ? (is_joystick_connected ? Input.GetKey(KeyCode.Joystick1Button1) : Input.GetKey(KeyCode.KeypadEnter)) : Input.GetKey(KeyCode.Space);
         if (toss_input && !is_tossing_)
         {
             StartTossing();
@@ -114,13 +116,14 @@ public class CharacterController : MonoBehaviour
             if (is_using_fishing_pole_)
                 current_cross_hair_speed /= 2;
             float vertical_input, horizontal_input;
-            vertical_input = is_joystick_ ? Input.GetAxis("JoystickVertical") : Input.GetAxis("Vertical");
+
+            vertical_input = is_joystick_ ? is_joystick_connected ? Input.GetAxis("JoystickVertical") : Input.GetAxis("Character2Vertical") : Input.GetAxis("Vertical");
             if (vertical_input != 0)
             {
                 crosshair_.transform.Translate(Vector2.up * vertical_input * Time.deltaTime * current_cross_hair_speed);
             }
 
-            horizontal_input = is_joystick_ ? Input.GetAxis("JoystickHorizontal") : Input.GetAxis("Horizontal");
+            horizontal_input = is_joystick_ ? is_joystick_connected ? Input.GetAxis("JoystickHorizontal") : Input.GetAxis("Character2Horizontal") : Input.GetAxis("Horizontal");
             if (horizontal_input != 0)
             {
                 crosshair_.transform.Translate(Vector2.right * horizontal_input * Time.deltaTime * current_cross_hair_speed);
@@ -249,10 +252,8 @@ public class CharacterController : MonoBehaviour
         is_tossing_ = true;
         crosshair_.transform.localPosition = Vector2.zero;
         crosshair_.GetComponent<SpriteRenderer>().enabled = true;
-        if (is_using_fishing_pole_)
-        {
+        if (is_using_fishing_pole_ && item_list_.Count == 0)
             crosshair_.GetComponent<SpriteRenderer>().color = Color.blue;
-        }
         else
             crosshair_.GetComponent<SpriteRenderer>().color = Color.red;
     }
@@ -282,7 +283,7 @@ public class CharacterController : MonoBehaviour
 
     void FinishTossing()
     {
-        if (is_using_fishing_pole_)
+        if (is_using_fishing_pole_  && item_list_.Count == 0)
         {
             GameObject hook= Instantiate(hook_object_, transform.position, Quaternion.identity);
             HookController hook_controller = hook.GetComponent<HookController>();

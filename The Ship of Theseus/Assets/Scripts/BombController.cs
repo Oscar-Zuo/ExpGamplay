@@ -27,9 +27,9 @@ public class BombController : ItemController
 
     IEnumerator StartBooming()
     {
-        boom_animator_.SetTrigger("Boom");
+        boom_animator_.SetTrigger("CountingDown");
         yield return new WaitForSeconds(animation_lasting_speed_);
-
+        boom_animator_.SetTrigger("Boom");
         if (GameManager.instance_.ship_controller_.IsOnShip(GetComponent<Collider2D>()))
         {
             GameManager.instance_.ship_controller_.Health -= damage;
@@ -44,8 +44,6 @@ public class BombController : ItemController
         }
         audio_source_.clip = boom_audio_;
         audio_source_.Play();
-        GetComponent<SpriteRenderer>().enabled = false;
-        boom_animator_.enabled = false;
         yield return new WaitForSeconds(boom_audio_.length);
         Destroy(gameObject);
     }
@@ -53,8 +51,8 @@ public class BombController : ItemController
     public override void StartTossing(Vector2 position)
     {
         base.StartTossing(position);
-        if (boom_animator_)
-            boom_animator_.Play("Boom", 0, 0);
+        if (boom_animator_ && !boom_animator_.GetCurrentAnimatorStateInfo(0).IsName("Boom"))
+            boom_animator_.Play("CountingDown", 0, 0);
         StopAllCoroutines();
         StartCoroutine(Toss(position));
     }

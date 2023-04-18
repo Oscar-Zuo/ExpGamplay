@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.AI;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PiratesController : MonoBehaviour
 {
     // Start is called before the first frame update
     public float cannon_accuracy_ = 0f;
     [SerializeField] GameObject cannon_ball_object_;
-    [SerializeField] Transform cannon_muzzle_;
+    [SerializeField] UnityEngine.Transform cannon_muzzle_;
     public float speed_ = 3.0f;
     public float shot_interval_ = 10.0f;
     public int max_health_ = 2;
     public int next_state_ = 0;
+    public float rotation_speed_ = Mathf.PI / 2;
 
     int health_;
 
@@ -47,14 +49,29 @@ public class PiratesController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       
+        
+    }
+
+    IEnumerator Moving()
+    {
         var path_list = GameManager.instance_.prirates_path_list_;
-        if (Vector2.Distance(transform.position, path_list[next_state_].position)<=0.05)
+        if (Vector2.Distance(transform.position, path_list[next_state_].position) <= 0.05)
         {
+            Vector2 direction = (path_list[(next_state_ + 1) % path_list.Count].position - transform.position).normalized;
+            float angle = Vector2.Angle(direction, -transform.right);
+            if (angle <= 0.01)
+                transform.right = -direction;
+            else
+            {
+                transform.Rotate(transform.up, rotation_speed_ * Time.deltaTime * Mathf.Sign(Vector3.Dot(transform.up, Vector3.Cross(direction, -transform.right))));
+                yield return new WaitForEndOfFrame();
+            }
             next_state_ = (next_state_ + 1) % path_list.Count;
         }
 
         transform.position = Vector3.MoveTowards(transform.position, path_list[next_state_].position, speed_ * Time.deltaTime);
-        
+        yield return new WaitForEndOfFrame();
     }
 
     IEnumerator Cannon()

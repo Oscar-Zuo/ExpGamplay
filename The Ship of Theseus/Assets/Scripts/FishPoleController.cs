@@ -22,7 +22,7 @@ public class FishPoleController : MonoBehaviour
         if (!other.tag.Equals("Player"))
             return;
         CharacterController controller = other.GetComponent<CharacterController>();
-        if (controller == null || controller.ItemList.Count>0)
+        if (controller == null)
             return;
         controller.is_using_fishing_pole_ = true;
     }
