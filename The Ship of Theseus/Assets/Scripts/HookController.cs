@@ -61,13 +61,13 @@ public class HookController : ItemController
     {
         if (item == null || !item.tag.Equals("Item")) return;
         ItemController itemController = item.GetComponent<ItemController>();
-        if (itemController == null || !itemController.is_activated_)
+        if (itemController == null || !itemController.is_activated_ || item.transform.parent != null)
             return;
         FloatingController floating_controller = item.GetComponent<FloatingController>();
         if (floating_controller)
             floating_controller.Deactivate();
         item.transform.parent = transform;
-        item.transform.localPosition = new Vector2(0, 0.5f * collected_item_list_.Count);
+        item.transform.localPosition = new Vector2(0, 0.25f * collected_item_list_.Count);
         itemController.is_activated_ = false;
         item.GetComponent<SpriteRenderer>().sortingLayerName = "Default";
         collected_item_list_.Add(item);

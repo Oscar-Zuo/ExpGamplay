@@ -76,7 +76,7 @@ public class CharacterController : MonoBehaviour
         }
 
         // animator setting
-        if (rb2D_.velocity.sqrMagnitude >= 0.05)
+        if (rb2D_.velocity.magnitude >= 0.05)
             animator.SetBool("IsMoving", true);
         else
             animator.SetBool("IsMoving", false);
@@ -110,17 +110,20 @@ public class CharacterController : MonoBehaviour
 
         if (is_tossing_)
         {
+            float current_cross_hair_speed = cross_hair_speed_;
+            if (is_using_fishing_pole_)
+                current_cross_hair_speed /= 2;
             float vertical_input, horizontal_input;
             vertical_input = is_joystick_ ? Input.GetAxis("JoystickVertical") : Input.GetAxis("Vertical");
             if (vertical_input != 0)
             {
-                crosshair_.transform.Translate(Vector2.up * vertical_input * Time.deltaTime * cross_hair_speed_);
+                crosshair_.transform.Translate(Vector2.up * vertical_input * Time.deltaTime * current_cross_hair_speed);
             }
 
             horizontal_input = is_joystick_ ? Input.GetAxis("JoystickHorizontal") : Input.GetAxis("Horizontal");
             if (horizontal_input != 0)
             {
-                crosshair_.transform.Translate(Vector2.right * horizontal_input * Time.deltaTime * cross_hair_speed_);
+                crosshair_.transform.Translate(Vector2.right * horizontal_input * Time.deltaTime * current_cross_hair_speed);
             }
 
             if (Vector2.Distance(transform.position, crosshair_.transform.position) > max_toss_range_)
