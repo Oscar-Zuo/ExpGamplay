@@ -21,12 +21,13 @@ public class GameManager : MonoBehaviour
     public float pirates_spawn_interval_ = 20.0f;
     public int target_progress_ = 30;
     public GameObject progress_bar;
+    public GameObject pause_ui;
 
     public static GameManager instance_;
 
-    int remaining_time;
     protected float screen_bound_x_ = 10, screen_bound_y_ = 4.5f;
     private int progress_ = 0;
+    bool is_paused = false, pause_key_last_trigger = false;
 
     public static GameObject GetPirateShipByPosition(Vector2 position)
     {
@@ -85,11 +86,34 @@ public class GameManager : MonoBehaviour
         instance_ = this;
         StartCoroutine(GenerateItems());
         StartCoroutine(GeneratePirates());
+        Unpause();
+    }
+
+    public void Pause()
+    {
+        pause_ui.SetActive(true);
+        is_paused = true;
+        Time.timeScale = 0;
+    }
+
+    public void Unpause()
+    {
+        pause_ui.SetActive(false);
+        is_paused = false;
+        Time.timeScale = 1;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        var pause_key = Input.GetKey(KeyCode.Escape);
+        if (pause_key && !pause_key_last_trigger)
+        {
+            if (is_paused )
+                Unpause();
+            else
+                Pause();
+        }
+        pause_key_last_trigger = pause_key;
     }
 }

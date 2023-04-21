@@ -22,9 +22,13 @@ public class UIController : MonoBehaviour
         Application.Quit();
     }
 
-    public void StartGame()
+    public void LoadStartMenu()
     {
         SceneManager.LoadScene("StartMenu");
     }
 
+    public void StartGame()
+    {
+        SceneManager.LoadScene("MainScene");
+    }
 }

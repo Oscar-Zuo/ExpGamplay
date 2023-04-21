@@ -14,7 +14,7 @@ public class PiratesController : MonoBehaviour
     public float shot_interval_ = 10.0f;
     public int max_health_ = 2;
     public int next_state_ = 0;
-    public float rotation_speed_ = Mathf.PI / 2;
+    public float rotation_speed_ = 90;
 
     int health_;
 
@@ -43,6 +43,7 @@ public class PiratesController : MonoBehaviour
         //}
 
         StartCoroutine(Cannon());
+        StartCoroutine(Moving());
         Health = max_health_;
     }
 
@@ -56,22 +57,29 @@ public class PiratesController : MonoBehaviour
     IEnumerator Moving()
     {
         var path_list = GameManager.instance_.prirates_path_list_;
-        if (Vector2.Distance(transform.position, path_list[next_state_].position) <= 0.05)
+        while (true)
         {
-            Vector2 direction = (path_list[(next_state_ + 1) % path_list.Count].position - transform.position).normalized;
-            float angle = Vector2.Angle(direction, -transform.right);
-            if (angle <= 0.01)
-                transform.right = -direction;
-            else
+            if (Vector2.Distance(transform.position, path_list[next_state_].position) <= 0.05)
             {
-                transform.Rotate(transform.up, rotation_speed_ * Time.deltaTime * Mathf.Sign(Vector3.Dot(transform.up, Vector3.Cross(direction, -transform.right))));
-                yield return new WaitForEndOfFrame();
-            }
-            next_state_ = (next_state_ + 1) % path_list.Count;
-        }
+                next_state_ = (next_state_ + 1) % path_list.Count;
 
-        transform.position = Vector3.MoveTowards(transform.position, path_list[next_state_].position, speed_ * Time.deltaTime);
-        yield return new WaitForEndOfFrame();
+                Vector2 direction;
+                float angle;
+                do
+                {
+                    direction = (path_list[next_state_].position - transform.position).normalized;
+                    angle = Vector2.Angle(direction, -transform.right);
+                    float test = -Mathf.Sign(Vector3.Dot(transform.forward, Vector3.Cross(direction, -transform.right)));
+                    transform.Rotate(transform.forward, rotation_speed_ * Time.deltaTime * test);
+                    yield return new WaitForEndOfFrame();
+                }while (angle > 3.6);
+
+                transform.right = -direction; // forward to the target position
+            }
+
+            transform.position = Vector3.MoveTowards(transform.position, path_list[next_state_].position, speed_ * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     IEnumerator Cannon()
@@ -88,7 +96,7 @@ public class PiratesController : MonoBehaviour
         if (!cannon_ball_object_)
             return;
 
-        GameObject cannon_ball = Instantiate(cannon_ball_object_, cannon_muzzle_.position, Quaternion.identity);
+        GameObject cannon_ball = Instantiate(cannon_ball_object_, cannon_muzzle_.position, Quaternion.identity, null);
         BombController cannon_ball_controller = cannon_ball.GetComponent<BombController>();
         if (cannon_ball_controller)
         {

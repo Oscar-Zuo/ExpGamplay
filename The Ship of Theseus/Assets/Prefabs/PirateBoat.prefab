@@ -171,6 +171,7 @@ MonoBehaviour:
   shot_interval_: 9
   max_health_: 2
   next_state_: 0
+  rotation_speed_: 45
 --- !u!212 &4100000148593453448
 SpriteRenderer:
   m_ObjectHideFlags: 0

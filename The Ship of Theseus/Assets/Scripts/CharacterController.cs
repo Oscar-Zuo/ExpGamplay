@@ -85,6 +85,11 @@ public class CharacterController : MonoBehaviour
         animator.SetFloat("Vertical", rb2D_.velocity.x);
     }
 
+    bool CanUseFishPole()
+    {
+        return is_using_fishing_pole_ && item_list_.Count == 0;
+    }
+
     private void Update()
     {
         // process interact input
@@ -113,7 +118,7 @@ public class CharacterController : MonoBehaviour
         if (is_tossing_)
         {
             float current_cross_hair_speed = cross_hair_speed_;
-            if (is_using_fishing_pole_)
+            if (CanUseFishPole())
                 current_cross_hair_speed /= 2;
             float vertical_input, horizontal_input;
 
@@ -252,7 +257,7 @@ public class CharacterController : MonoBehaviour
         is_tossing_ = true;
         crosshair_.transform.localPosition = Vector2.zero;
         crosshair_.GetComponent<SpriteRenderer>().enabled = true;
-        if (is_using_fishing_pole_ && item_list_.Count == 0)
+        if (CanUseFishPole())
             crosshair_.GetComponent<SpriteRenderer>().color = Color.blue;
         else
             crosshair_.GetComponent<SpriteRenderer>().color = Color.red;
@@ -283,7 +288,7 @@ public class CharacterController : MonoBehaviour
 
     void FinishTossing()
     {
-        if (is_using_fishing_pole_  && item_list_.Count == 0)
+        if (CanUseFishPole())
         {
             GameObject hook= Instantiate(hook_object_, transform.position, Quaternion.identity);
             HookController hook_controller = hook.GetComponent<HookController>();

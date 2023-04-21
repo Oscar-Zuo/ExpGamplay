@@ -11,6 +11,7 @@ public class BombController : ItemController
 
     Animator boom_animator_;
     float animation_speed_;
+    bool is_booming = false;
 
     [SerializeField] protected AudioClip boom_audio_;
 
@@ -30,6 +31,7 @@ public class BombController : ItemController
         boom_animator_.SetTrigger("CountingDown");
         yield return new WaitForSeconds(animation_lasting_speed_);
         boom_animator_.SetTrigger("Boom");
+        is_booming = true;
         if (GameManager.instance_.ship_controller_.IsOnShip(GetComponent<Collider2D>()))
         {
             GameManager.instance_.ship_controller_.Health -= damage;
@@ -50,11 +52,12 @@ public class BombController : ItemController
 
     public override void StartTossing(Vector2 position)
     {
-        base.StartTossing(position);
-        if (boom_animator_ && !boom_animator_.GetCurrentAnimatorStateInfo(0).IsName("Boom"))
+        if (boom_animator_ && !is_booming)
+        {
             boom_animator_.Play("CountingDown", 0, 0);
-        StopAllCoroutines();
-        StartCoroutine(Toss(position));
+            StopAllCoroutines();
+        }
+        base.StartTossing(position);
     }
 
     public override void Landed(bool tossed)
