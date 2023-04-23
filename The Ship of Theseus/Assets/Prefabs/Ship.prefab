@@ -1887,7 +1887,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   is_activated_: 0
-  last_time_: 2
+  last_time_: 1
   spirte_: {fileID: 21300000, guid: 74052a7ebfb5bcb4b9b7a9eee1c50619, type: 3}
 --- !u!50 &3365310798305735521
 Rigidbody2D:
@@ -2522,7 +2522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   is_activated_: 0
-  last_time_: 2
+  last_time_: 1
   spirte_: {fileID: 21300000, guid: 74052a7ebfb5bcb4b9b7a9eee1c50619, type: 3}
 --- !u!50 &2101222958085765071
 Rigidbody2D:
@@ -3587,7 +3587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   is_activated_: 0
-  last_time_: 2
+  last_time_: 1
   spirte_: {fileID: 21300000, guid: 74052a7ebfb5bcb4b9b7a9eee1c50619, type: 3}
 --- !u!50 &6341693441255719114
 Rigidbody2D:
@@ -4256,7 +4256,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   is_activated_: 0
-  last_time_: 2
+  last_time_: 1
   spirte_: {fileID: 21300000, guid: 74052a7ebfb5bcb4b9b7a9eee1c50619, type: 3}
 --- !u!50 &2227693144024558038
 Rigidbody2D:
@@ -5055,7 +5055,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   is_activated_: 0
-  last_time_: 2
+  last_time_: 1
   spirte_: {fileID: 21300000, guid: 74052a7ebfb5bcb4b9b7a9eee1c50619, type: 3}
 --- !u!50 &6892597699491109048
 Rigidbody2D:

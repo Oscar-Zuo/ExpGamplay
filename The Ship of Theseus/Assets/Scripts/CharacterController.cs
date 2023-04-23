@@ -1,11 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 public class CharacterController : MonoBehaviour
 {
@@ -85,11 +81,6 @@ public class CharacterController : MonoBehaviour
         animator.SetFloat("Vertical", rb2D_.velocity.x);
     }
 
-    bool CanUseFishPole()
-    {
-        return is_using_fishing_pole_ && item_list_.Count == 0;
-    }
-
     private void Update()
     {
         // process interact input
@@ -141,6 +132,19 @@ public class CharacterController : MonoBehaviour
             }
         }
     }
+
+    public void ReorderItemList()
+    {
+        ItemList.RemoveAll(s => s == null);
+        for (int i = 0; i < ItemList.Count; ++i)
+            ItemList[i].transform.localPosition = new Vector2(0, 0.5f * i);
+    }
+
+    bool CanUseFishPole()
+    {
+        return is_using_fishing_pole_ && item_list_.Count == 0;
+    }
+
     void Interact()
     {
         if (interacting_object_)
@@ -148,9 +152,9 @@ public class CharacterController : MonoBehaviour
         if (interact_timer_ != null)
             interact_timer_ = null;
 
+        ItemList.RemoveAll(s => s == null);
         foreach (var interactable in interactable_list_)
         {
-            if (interactable == null) continue;
             InteractableController interactableController = interactable.GetComponent<InteractableController>();
             if (interactableController == null) continue;
             if (interactableController.StartInteract(gameObject))
@@ -160,6 +164,7 @@ public class CharacterController : MonoBehaviour
                 break;
             }
         }
+        ReorderItemList();
     }
 
     void StopInteract()
@@ -236,8 +241,10 @@ public class CharacterController : MonoBehaviour
     public void PickupItem(GameObject item)
     {
         if (item == null) return;
+        if (interactable_list_.Contains(item))
+            interactable_list_.Remove(item);
         item.transform.parent = items_parent_object_;
-        item.transform.localPosition = new Vector2(0, 0.5f * item_list_.Count);
+        item.transform.localPosition = new Vector2(0, 0.5f * (item_list_.Count -1));
         item.GetComponent<ItemController>().is_activated_ = false;
         item.GetComponent<SpriteRenderer>().sortingLayerName = "Default";
         item_list_.Add(item);

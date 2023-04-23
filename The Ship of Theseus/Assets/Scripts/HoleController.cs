@@ -49,6 +49,8 @@ public class HoleController : InteractableController
 
         bool has_plank = false;
         var player_items = player.GetComponent<CharacterController>().ItemList;
+
+        player_items.RemoveAll(s => s == null);
         foreach (var item in player_items)
         {
             var item_controller = item.GetComponent<ItemController>();

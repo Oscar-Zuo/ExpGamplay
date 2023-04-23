@@ -1,8 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Recorder.Input;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class BombController : ItemController
 {
@@ -47,6 +44,15 @@ public class BombController : ItemController
         audio_source_.clip = boom_audio_;
         audio_source_.Play();
         yield return new WaitForSeconds(boom_audio_.length);
+        if (transform.parent != null && transform.parent.tag.Equals("player"))
+        {
+            var player_controller = transform.parent.gameObject.GetComponent<CharacterController>();
+            if (player_controller != null && player_controller.ItemList.Contains(gameObject))
+            {
+                player_controller.ItemList.Remove(gameObject);
+                player_controller.ReorderItemList();
+            }
+        }
         Destroy(gameObject);
     }
 

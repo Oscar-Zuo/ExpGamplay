@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CraftTableController : InteractableController
@@ -21,10 +18,9 @@ public class CraftTableController : InteractableController
         if (player_controller == null) { return false; }
 
         bool has_nails = false, has_plank = false;
-
+        player_controller.ItemList.RemoveAll(s => s == null);
         foreach (var item in player_controller.ItemList)
         {
-            if (item == null) continue;
             ItemController item_controller = item.GetComponent<ItemController>();
             if (item_controller == null) continue;
 
@@ -36,7 +32,7 @@ public class CraftTableController : InteractableController
             if (has_nails && has_plank)
                 return true;
         }
-
+        player_controller.ReorderItemList();
         return false;
     }
 
@@ -46,9 +42,9 @@ public class CraftTableController : InteractableController
         CharacterController player_controller = player.GetComponent<CharacterController>();
         if (player_controller == null) { return; }
 
+        player_controller.ItemList.RemoveAll(s => s == null);
         foreach (var item in player_controller.ItemList)
         {
-            if (item == null) continue;
             ItemController item_controller = item.GetComponent<ItemController>();
             if (item_controller == null) continue;
 
@@ -60,9 +56,9 @@ public class CraftTableController : InteractableController
             }
         }
 
+        player_controller.ItemList.RemoveAll(s => s == null);
         foreach (var item in player_controller.ItemList)
         {
-            if (item == null) continue;
             ItemController item_controller = item.GetComponent<ItemController>();
             if (item_controller == null) continue;
 
@@ -75,5 +71,6 @@ public class CraftTableController : InteractableController
         }
 
         player_controller.PickupItem(Instantiate(repair_kit_object_));
+        player_controller.ReorderItemList();
     }
 }
