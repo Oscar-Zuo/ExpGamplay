@@ -15,16 +15,11 @@ public class ItemController : MonoBehaviour
     [SerializeField] protected EItemType itemType;
     [SerializeField] protected GameObject itemObject;
     [SerializeField] protected float lifeTime = 30;
-    //protected TankController playerController;
 
     public EItemType ItemType { get => itemType; set => itemType = value; }
     public GameObject ItemObject { get => itemObject; set => itemObject = value; }
     public float LifeTime { get => lifeTime; set => lifeTime = value; }
 
-    virtual protected void Start()
-    {
-        //playerController = GameObject.FindWithTag("Player").GetComponent<TankController>();
-    }
 
     // Update is called once per frame
     virtual protected void Update()

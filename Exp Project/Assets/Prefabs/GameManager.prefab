@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267603155083089123}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6620866650186824841
 MonoBehaviour:
@@ -73,5 +73,22 @@ MonoBehaviour:
     m_RotationOrder: 4
   enemyTypes:
   - {fileID: 690773638138909766, guid: 08d455feee463e9488b6e3c1f13ec32f, type: 3}
-  itemPool: []
+  itemPool:
+  - itemObject: {fileID: 8478629880208030084, guid: 33f04834ddd8bfc4186847d260a560f4, type: 3}
+    chance: 5
+  - itemObject: {fileID: 8478629880208030084, guid: cb1939f7d7355a849a1c5a3defa15503, type: 3}
+    chance: 5
+  - itemObject: {fileID: 8478629880208030084, guid: a26b79623a838904095305f7ddda95b2, type: 3}
+    chance: 3
+  - itemObject: {fileID: 8478629880208030084, guid: 5366ba070e651cd4fb90e620856a517d, type: 3}
+    chance: 3
+  - itemObject: {fileID: 8478629880208030084, guid: 0640c419b4c45274da4bc146bb267fc7, type: 3}
+    chance: 5
+  - itemObject: {fileID: 8478629880208030084, guid: 3b240d1de87d92947a451677925d772f, type: 3}
+    chance: 3
+  - itemObject: {fileID: 8478629880208030084, guid: a727930a60175d342a83259f35c95dba, type: 3}
+    chance: 5
+  - itemObject: {fileID: 8478629880208030084, guid: f81c09afb5c4a5c4296871ef7fba455e, type: 3}
+    chance: 5
+  playerController: {fileID: 0}
   gameOverUIObject: {fileID: 3943802288412678847, guid: 6d3bbdb77abf2d645b522ae2841fee83, type: 3}

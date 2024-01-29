@@ -7,10 +7,6 @@ public class JellyCanController : ItemController
 {
     protected float speed = 0.2f;
     // Start is called before the first frame update
-    protected override void Start()
-    {
-        base.Start();
-    }
 
     // Update is called once per frame
     protected override void Update()
@@ -21,7 +17,7 @@ public class JellyCanController : ItemController
     public override void ActivateItemEffects()
     {
         base.ActivateItemEffects();
-        GameManager.instance.playerController.ForwardSpeed += speed;
-        GameManager.instance.playerController.BackwardSpeed+= speed;
+        GameManager.Instance.playerController.ForwardSpeed += speed;
+        GameManager.Instance.playerController.BackwardSpeed += speed;
     }
 }

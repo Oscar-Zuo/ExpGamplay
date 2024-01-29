@@ -65,6 +65,6 @@ public class ProjectileController : MonoBehaviour
 
     public virtual float GetDamage()
     {
-        return GameManager.instance.playerController.PlayerDamage * damageModifier;
+        return GameManager.Instance.playerController.PlayerBaseDamage * damageModifier;
     }
 }

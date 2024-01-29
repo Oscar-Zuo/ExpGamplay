@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+[System.Serializable]
+public struct WeaponObject
+{
+    public GameObject weapon;
+    public Transform weaponPivots;
+    public WeaponObject(GameObject _weapon, Transform _weaponPrivots)
+    {
+        weapon = _weapon;
+        weaponPivots = _weaponPrivots;
+    }
+}
+
 public class WeaponsSlotsController : MonoBehaviour
 {
-    [System.Serializable]
-    public struct WeaponObject
-    {
-        public GameObject weapon;
-        public Transform weaponPivots;
-        public WeaponObject( GameObject _weapon, Transform _weaponPrivots)
-        {
-            weapon = _weapon;
-            weaponPivots = _weaponPrivots;
-        }
-    }
 
     public List<WeaponObject> weaponSlots;
     private bool lastFrameFireInput;
@@ -48,26 +49,25 @@ public class WeaponsSlotsController : MonoBehaviour
         }
     }
 
-    public void AddWeapon(GameObject weapon)
+    public void AddWeapon(GameObject weaponObject)
     {
-        bool added = false;
-        for (int i=0; i<weaponSlots.Count; i++)
+        WeaponObject weapon;
+        for (int i = 0; i < weaponSlots.Count; i++)
         {
-            if (weaponSlots[i].weapon==null)
-            {
-                WeaponObject weaponObject = weaponSlots[i];
-                weaponObject.weapon = Instantiate(weapon, weaponObject.weaponPivots);
-                weaponSlots[i] = weaponObject;
-                added= true;
-                break;
-            }
+            if (weaponSlots[i].weapon != null)
+                continue;
+
+            weapon = weaponSlots[i];
+            weapon.weapon = Instantiate(weaponObject, weapon.weaponPivots.position, weapon.weaponPivots.rotation, weapon.weaponPivots);
+            weaponSlots[i] = weapon;
+
+            return;
         }
-        if (!added)
-        {
-            int index = Random.Range(0, weaponSlots.Count);
-            WeaponObject weaponObject = weaponSlots[index];
-            weaponObject.weapon = Instantiate(weapon, weaponObject.weaponPivots);
-            weaponSlots[index] = weaponObject;
-        }
+
+        int index = Random.Range(0, weaponSlots.Count);
+        weapon = weaponSlots[index];
+        weapon.weapon = Instantiate(weaponObject, weapon.weaponPivots);
+        weaponSlots[index] = weapon;
+
     }
 }

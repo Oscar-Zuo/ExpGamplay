@@ -6,10 +6,6 @@ public class APAmmoController : ItemController
 {
     // Start is called before the first frame update
     public float damage = 0.5f;
-    protected override void Start()
-    {
-        base.Start();
-    }
 
     // Update is called once per frame
     protected override void Update()
@@ -20,7 +16,7 @@ public class APAmmoController : ItemController
     public override void ActivateItemEffects()
     {
         base.ActivateItemEffects();
-        GameManager.instance.playerController.PlayerDamage += damage;
+        GameManager.Instance.playerController.PlayerBaseDamage += damage;
     }
 
 }

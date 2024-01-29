@@ -21,9 +21,9 @@ public class MainUIController : MonoBehaviour
     {
         if (health != null)
         {
-            health.text = GameManager.instance.playerController.Health.ToString();
+            health.text = GameManager.Instance.playerController.Health.ToString();
 
-            if (GameManager.instance.playerController.Health <= 2)
+            if (GameManager.Instance.playerController.Health <= 2)
                 health.style.color = Color.red;
             else
                 health.style.color = Color.green;

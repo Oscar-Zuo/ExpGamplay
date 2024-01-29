@@ -38,12 +38,12 @@ public class BasicWeaponController : MonoBehaviour
 
     virtual public void StartFire()
     {
-        isFiring= true;
+        isFiring = true;
     }
 
     virtual public void StopFire()
     { 
-        isFiring= false;
+        isFiring = false;
     }
 
     virtual protected void Fire()
@@ -54,7 +54,7 @@ public class BasicWeaponController : MonoBehaviour
             float weaponLength = GetComponent<BoxCollider2D>().size.y;
             bullet.transform.position = transform.position + transform.up*weaponLength;
             bullet.transform.rotation = transform.rotation;
-            yield return new WaitForSeconds(fireRate * GameManager.instance.playerController.FireRateModifier);
+            yield return new WaitForSeconds(fireRate * GameManager.Instance.playerController.FireRateModifier);
             currentCoroutine = null;
         }
         currentCoroutine = StartCoroutine(EFire());

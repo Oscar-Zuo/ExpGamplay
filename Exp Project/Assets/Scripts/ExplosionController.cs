@@ -8,12 +8,10 @@ public class ExplosionController : MonoBehaviour
     public float explosiveLastTime = 0.5f;
     public float damageModifier = 1;
     public float knockBackForce = 0;
-    TankController playerController;
     float playerDamage;
     void Start()
     {
-        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<TankController>();
-        playerDamage = playerController.PlayerDamage;
+        playerDamage = GameManager.Instance.playerController.PlayerBaseDamage;
         Destroy(gameObject, explosiveLastTime);
     }
 

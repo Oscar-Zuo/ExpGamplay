@@ -6,10 +6,6 @@ public class LionController : ItemController
 {
     public float fireRateModifier = 0.9f;
     // Start is called before the first frame update
-    protected override void Start()
-    {
-        base.Start();
-    }
 
     // Update is called once per frame
     protected override void Update()
@@ -20,6 +16,6 @@ public class LionController : ItemController
     public override void ActivateItemEffects()
     {
         base.ActivateItemEffects();
-        GameManager.instance.playerController.FireRateModifier *= fireRateModifier;
+        GameManager.Instance.playerController.FireRateModifier *= fireRateModifier;
     }
 }

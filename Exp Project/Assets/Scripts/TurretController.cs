@@ -5,7 +5,6 @@ using UnityEngine;
 public class TurretController : MonoBehaviour
 {
     // Start is called before the first frame update
-    GameObject player;
     [SerializeField] float rotateSpeed = 270f;
     void Start()
     {

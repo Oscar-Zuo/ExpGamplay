@@ -6,23 +6,20 @@ public class TankController : MonoBehaviour
 {
     [SerializeField] protected float backwardSpeed = 5, maxSpeed = 15, minSpeed = 3;
     [SerializeField] protected int maxHealth = 5;
-    [SerializeField] protected float playerDamage = 1;
+    [SerializeField] protected float playerBaseDamage = 1;
     [SerializeField] protected float fireRateModifier = 1;
     protected int health;
-    public float invincibleTime = 1;
-    protected Vector2 speed;
-    Vector3 oldPosition;
     bool invincible = false;
-    BoxCollider2D boxCollider;
+    [SerializeField] private float invincibleTime = 1;
+    [SerializeField] private BoxCollider2D boxCollider;
     private List<GameObject> decoractionsList = new List<GameObject>();
-    Transform decoractionsContainer; 
+    [SerializeField] private Transform decoractionsContainer; 
     [SerializeField] private WeaponsSlotsController weaponsSlotsController;
+    [SerializeField] private FlashingController flashingController;
     [SerializeField] protected float forwardSpeed = 7, rotationSpeed = 180;
 
-    GameManager gameManager;
-    private Rigidbody2D rb2D;
+    [SerializeField] private Rigidbody2D rb2D;
 
-    public Vector2 Speed { get => speed; set => speed = value; }
     public float ForwardSpeed { get => forwardSpeed; set => forwardSpeed = Mathf.Clamp(value, minSpeed, maxSpeed); }
     public float BackwardSpeed { get => backwardSpeed; set => backwardSpeed = Mathf.Clamp(value, minSpeed, maxSpeed); }
     public float RotationSpeed { get => rotationSpeed; set => rotationSpeed = value; }
@@ -34,12 +31,12 @@ public class TankController : MonoBehaviour
             health = Mathf.Clamp(value, 0, maxHealth);
             if (health <= 0)
             {
-                gameManager.GameOver();
+                GameManager.Instance.GameOver();
             }
         }
     }
 
-    public float PlayerDamage { get => playerDamage; set => playerDamage = value; }
+    public float PlayerBaseDamage { get => playerBaseDamage; set => playerBaseDamage = value; }
     public int MaxHealth { get => maxHealth; set => maxHealth = value; }
     public float FireRateModifier { get => fireRateModifier; set => fireRateModifier = value; }
 
@@ -47,36 +44,28 @@ public class TankController : MonoBehaviour
     void Start()
     {
         Health = MaxHealth;
-        oldPosition=transform.position;
-        rb2D = GetComponent<Rigidbody2D>();
-        boxCollider= GetComponent<BoxCollider2D>();
-        decoractionsContainer = transform.Find("Decoractions");
-        gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();  
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         Vector2 translation;
-        if (Input.GetAxis("Vertical") > 0)
+        float verticalInput = Input.GetAxis("Vertical");
+        if (verticalInput > 0)
         {
-            translation = Input.GetAxis("Vertical") * Time.fixedDeltaTime * transform.up * ForwardSpeed;
+            translation = verticalInput * Time.fixedDeltaTime * transform.up * ForwardSpeed;
             rb2D.MovePosition(rb2D.position + translation);
         }
             
         else if (Input.GetAxis("Vertical") < 0)
         {
-            translation = Input.GetAxis("Vertical") * Time.fixedDeltaTime * transform.up * backwardSpeed;
+            translation = backwardSpeed * Input.GetAxis("Vertical") * Time.fixedDeltaTime * transform.up;
             rb2D.MovePosition(rb2D.position + translation);
         }
 
         float rotation = -Input.GetAxis("Horizontal") * Time.fixedDeltaTime;
         // rotate tank
         rb2D.MoveRotation(rb2D.rotation + rotation * RotationSpeed);
-
-        // Get speed for bullets
-        speed = transform.up * Vector3.Distance(oldPosition, transform.position);
-        oldPosition = transform.position;
     }
 
     public void OnHit(int Damage)
@@ -87,7 +76,7 @@ public class TankController : MonoBehaviour
             Health -= Damage;
             invincible = true;
             // player become invincible
-            GetComponent<FlashingController>().StartFlashing();
+            flashingController.StartFlashing();
             StartCoroutine(ESetInvincible());
         }
     }
@@ -101,7 +90,7 @@ public class TankController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag.Equals("Item"))
+        if (collision.gameObject.CompareTag("Item"))
         {
             GameObject item = collision.gameObject;
             ItemController itemController = item.GetComponent<ItemController>();
@@ -113,7 +102,7 @@ public class TankController : MonoBehaviour
                     break;
                 case EItemType.Decoraction:
                     itemController.ActivateItemEffects();
-                    AddDecoraction(itemController.ItemObject);
+                    AddDecoraction(itemController.gameObject);
                     break;
             }
             Destroy(item);

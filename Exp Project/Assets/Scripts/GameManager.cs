@@ -1,9 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+
+[Serializable]
+public struct ItemPoolMember
+{
+    public GameObject itemObject;
+    public float chance;
+    [NonSerialized] public float realChance;
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -13,38 +22,66 @@ public class GameManager : MonoBehaviour
     public float enemyDropItemChance = 0.05f;
     public AnimationCurve enemySpawnCurve;
     public List<GameObject> enemyTypes;
-    public GameObject[] itemPool;
-    public GameObject player;
+    public List<ItemPoolMember> itemPool;
     public TankController playerController;
     private bool enemySpawnCoolingDown;
     public GameObject gameOverUIObject; 
 
-    public static GameManager instance;
+    public static GameManager Instance;
 
     void Start()
     {
         enemySpawnCoolingDown = false;
-        //player = GameObject.FindGameObjectWithTag("Player");
-        itemPool = Resources.LoadAll<GameObject>("Prefabs/Items");
-        playerController = player.GetComponent<TankController>();
+        InitializeItemPool();
+
+    }
+
+    void InitializeItemPool()
+    {
+        float itemsTotalChance = 0;
+        var temp = itemPool;
+        for (int i = 0; i < temp.Count; ++i)
+        {
+            var item = temp[i];
+            if (item.itemObject is null || item.itemObject.GetComponent<ItemController>() is null)
+            {
+                itemPool.Remove(item);
+                continue;
+            }
+            itemsTotalChance += item.chance;
+        }
+
+        float sumChance = 0;
+        for (int i = 0; i < itemPool.Count; ++i)
+        {
+            var item = itemPool[i];
+            item.realChance = sumChance / itemsTotalChance;
+            itemPool[i] = item;
+            sumChance += item.chance;
+        }
     }
 
     private void Awake()
     {
-        instance= this;
+        Instance = this;
     }
 
     public GameObject GetRandomItem()
     {
-        GameObject item = itemPool[Random.Range(0, itemPool.Length)];
-        ItemController itemController = item.GetComponent<ItemController>();
+        float randomNumber = UnityEngine.Random.value;
 
-        // TODO:: the worst way to change item weight, but I don't have time for this
-        if (itemController.ItemType == EItemType.Weapon ) 
+        int left = 0, right = itemPool.Count - 1;
+        int mid;
+        while (left < right)
         {
-            item = itemPool[Random.Range(0, itemPool.Length)];
+            mid = (left + right) / 2;
+            if (itemPool[mid].realChance <= randomNumber)
+                left = mid + 1; 
+            else
+                right = mid - 1;
         }
-        return item;
+
+        return itemPool[left].itemObject;
     }
 
     IEnumerator IEnemySpawn()
@@ -81,9 +118,9 @@ public class GameManager : MonoBehaviour
     {
         for (int i=0;i<num;i++)
         {
-            Vector2 spawnLocation = RotateVector2(new Vector2(enemiesSpawnDistance, 0), Random.value * 2 * Mathf.PI);
-            spawnLocation += new Vector2(player.transform.position.x, player.transform.position.y);
-            Instantiate(enemyTypes[Random.Range(0, enemyTypes.Count)], spawnLocation, Quaternion.identity);
+            Vector2 spawnLocation = RotateVector2(new Vector2(enemiesSpawnDistance, 0), UnityEngine.Random.value * 2 * Mathf.PI);
+            spawnLocation += new Vector2(playerController.transform.position.x, playerController.transform.position.y);
+            Instantiate(enemyTypes[UnityEngine.Random.Range(0, enemyTypes.Count)], spawnLocation, Quaternion.identity);
             
         }
     }
