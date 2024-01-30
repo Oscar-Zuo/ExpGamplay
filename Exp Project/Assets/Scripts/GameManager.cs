@@ -71,17 +71,17 @@ public class GameManager : MonoBehaviour
         float randomNumber = UnityEngine.Random.value;
 
         int left = 0, right = itemPool.Count - 1;
-        int mid;
+        int mid = (left + right) / 2;
         while (left < right)
         {
-            mid = (left + right) / 2;
             if (itemPool[mid].realChance <= randomNumber)
                 left = mid + 1; 
             else
                 right = mid - 1;
+            mid = (left + right) / 2;
         }
 
-        return itemPool[left].itemObject;
+        return itemPool[mid].itemObject;
     }
 
     IEnumerator IEnemySpawn()
